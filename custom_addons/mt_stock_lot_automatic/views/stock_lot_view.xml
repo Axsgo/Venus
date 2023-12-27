@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+		
+		<record id="res_config_settings_view_form_product" model="ir.ui.view">
+	        <field name="name">acc_stock.res.config.settings.view.form</field>
+	        <field name="model">res.config.settings</field>
+	        <field name="priority" eval="45"/>
+	        <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
+	        <field name="arch" type="xml">
+	            <xpath expr="//div[@id='full_traceability']" position="after">
+	                <div class="col-12 col-lg-6 o_setting_box" id="lot_auto_sequence" attrs="{'invisible': [('group_stock_production_lot', '=', False)]}" >
+	                    <div class="o_setting_left_pane">
+	                        <field name="enable_auto_lot"/>
+	                    </div>
+	                    <div class="o_setting_right_pane">
+	                        <label for="enable_auto_lot"/>
+	                        <div class="text-muted">
+	                            Enable automatic Serial No generation while in Reciepts (note: generate only for Serial No. and not for Lot No.)
+	                        </div>
+	                    </div>
+	                </div>
+	            </xpath>
+	        </field>
+	    </record>
+	    
+	    <record id="acc_product_template_tracking_form_view" model="ir.ui.view">
+            <field name="name">Product</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.view_template_property_form"/>
+            <field name="arch" type="xml">
+                <field name="tracking" position="after">
+                    <field name="enable_auto_lot" invisible='0'/>
+                </field>
+            </field>
+        </record>
+
+        <record id="acc_view_stock_move_operations" model="ir.ui.view">
+            <field name="name">Stock Move</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_stock_move_operations"/>
+            <field name="arch" type="xml">
+                <field name="product_id" position="after">
+                    <label for='tracking'/>
+                    <div>
+                        <field name='tracking' style="color:red"/>
+                    </div>
+                </field>
+                <field name="next_serial" position="after">
+                    <field name="enable_auto_lot" invisible='1' force_save='1'/>
+                    <field name="show_lots_text" invisible='1' force_save='1'/>
+                    <label for="next_serial_count" string="Number of Qty" attrs="{'invisible': ['|',('enable_auto_lot','=',False),('display_assign_serial', '=', True)]}"/>
+                        <div class="o_row" attrs="{'invisible': ['|',('enable_auto_lot','=',False),('display_assign_serial', '=', True)]}">
+                            <span><field name="next_serial_count" attrs="{'readonly': ['|', ('state', '=', 'cancel'), '&amp;', ('state', '=', 'done'), ('is_locked', '=', True)]}"/><!--   <field name="expiration_date" placeholder="Expiry Date" style="width:70% !important" attrs="{'readonly': ['|', ('state', '=', 'cancel'), '&amp;', ('state', '=', 'done'), ('is_locked', '=', True)]}"/> --></span>
+                            <button name="action_update_move_quantity" type="object"
+                                    class="btn-link"
+                                    title="Update Quantity" attrs="{'invisible': ['|', ('state', '=', 'cancel'), '&amp;', ('state', '=', 'done'), ('is_locked', '=', True)]}">
+                                <span>Update Quantity</span>
+                            </button>
+                            <button name="action_clear_lines_show_details" type="object"
+                                    class="btn-link"
+                                    title="Clear Lines"
+                                    attrs="{'invisible': ['|', ('state', '=', 'cancel'), '&amp;', ('state', '=', 'done'), ('is_locked', '=', True)]}">
+                                <span>Clear All</span>
+                            </button>
+                        </div>
+                </field>
+            </field>
+        </record>
+
+        <record id="acc_view_stock_move_line_detailed_operation_tree" model="ir.ui.view">
+            <field name="name">Stock Move Line</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.view_stock_move_line_detailed_operation_tree"/>
+            <field name="arch" type="xml">
+                <field name="lot_id" position="after">
+                    <field name="enable_auto_lot" invisible='1'/>
+                    <field name="serial_no" groups="stock.group_production_lot" attrs="{'invisible':[('enable_auto_lot','=',False)],'column_invisible':[('parent.has_tracking','=',False)]}" optional="hide"/>
+                </field>
+                <field name="lot_id" position="attributes">
+                    <attribute name="domain">[('product_id','=',product_id),('qty_available','>',0),('company_id','=',company_id)]</attribute>
+                </field>
+                <field name="product_uom_qty" position="attributes">
+                    <attribute name="attrs">{'column_invisible': [('parent.immediate_transfer', '=', True)]}</attribute>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

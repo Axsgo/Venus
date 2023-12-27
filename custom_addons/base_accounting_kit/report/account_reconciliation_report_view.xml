@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+    	<!-- Paperformat -->
+		<record id="ax_account_reconciliation_paperformat"
+            model="report.paperformat">
+            <field name="name">Axsgo Account Reconciliation Paperformat</field>
+            <field name="default" eval="True" />
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">0.00</field>
+            <field name="margin_bottom">15.00</field>
+            <field name="margin_left">4.00</field>
+            <field name="margin_right">4.00</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <report 
+            id="action_ax_account_reconciliation_report"
+            model="account.bank.statement"
+            string="Reconciliation Report"
+            report_type="qweb-pdf"
+            name="base_accounting_kit.report_account_reconciliation_template"
+            file="base_accounting_kit.report_account_reconciliation_template"
+            paperformat="base_accounting_kit.ax_account_reconciliation_paperformat"
+            print_report_name="'Reconciliation Report'"
+            />
+
+        <template id="report_account_reconciliation_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-if="o and 'company_id' in o">
+                        <t t-set="company" t-value="o.company_id"></t>
+                    </t>
+                    <t t-if="not o or not 'company_id' in o">
+                        <t t-set="company" t-value="res_company"></t>
+                    </t>
+                    <div class="header">
+                        <!-- <div class="row">
+                            <div class="col-6">
+                                <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d')"/>
+                            </div>
+                        </div> -->
+                    </div>
+                    <t t-call="web.external_layout">
+                        <t t-set="doc" t-value="doc.with_context({'lang':zh_CN})" />
+                        <div class="page">
+                            <div class="oe_structure"/>
+                            <table class="table table-sm table-borderless">
+                                <tr style="border-bottom:1px solid black">
+                                    <td style="padding-left: 80px;">
+                                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % to_text(company.logo)" style="max-height: 90px;" />
+                                    </td>
+                                    <td colspan='3'>
+                                        <strong><center><h3 style="margin-right:140px;"><span t-field="doc.company_id.name"/></h3></center></strong>
+                                        <center style="margin-right:140px;"><span  t-field="doc.company_id.street"/>,<span t-field="doc.company_id.street2"/>,<span t-field="doc.company_id.city"/>, 
+                                        <span t-field="doc.company_id.zip"/></center>
+                                        <center style="margin-right:140px;"><span>Email: </span><span t-field="doc.company_id.email"/>, <span>Phone: </span><span t-field="doc.company_id.phone"/></center>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table style="width:100%" class="table table-sm table-borderless">
+                                <tr>
+                                    <td colspan='4'>
+                                        <h2 style='color:black'><b><span t-field='doc.journal_id.name'/> Reconciliation Statement</b></h2>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b>Statement No:</b>
+                                    </td>
+                                    <td>
+                                        <span t-field='doc.name'/>
+                                    </td>
+                                    <td>
+                                        <b>Date:</b>
+                                    </td>
+                                    <td>
+                                        <span t-field="doc.date" t-options="{&quot;widget&quot;: &quot;date&quot;}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b>Starting Balance:</b>
+                                    </td>
+                                    <td>
+                                        <span t-field='doc.balance_start'/>
+                                    </td>
+                                    <td>
+                                        <b>Ending Balance:</b>
+                                    </td>
+                                    <td>
+                                        <span t-field="doc.balance_end_real"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b>Journal:</b>
+                                    </td>
+                                    <td>
+                                        <span t-field='doc.journal_id.name'/>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table style="width:100%" class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <td style="width:3% !important"><b>Sl.No</b></td>
+                                        <td style="width:65% !important"><b>Label</b></td>
+                                        <td style="width:20% !important"><b>Customer/Vendor</b></td>
+                                        <td style="width:15% !important" class="text-right"><b>Amount</b></td>
+                                    </tr>
+                                </thead>
+                                <tbody class="account_reconciliation_tbody">
+                                    <t t-set="sno" t-value="1" />
+                                    <t t-set='total_amt' t-value='0'/>
+                                    <t t-foreach="doc.line_ids" t-as="l">
+                                        <tr>
+                                            <td class='text-center'>
+                                                <span t-esc="sno"/>
+                                            </td>   
+                                            <td>
+                                                <span t-field='l.payment_ref'/>
+                                            </td>
+                                            <td>
+                                                <span t-field='l.partner_id.name'/>
+                                            </td>
+                                            <td class='text-right'>
+                                                <span t-field="l.amount" t-field-options='{"widget": "monetary", "display_currency": "l.currency_id"}'/>
+                                                <t t-set='total_amt' t-value='l.amount+total_amt'/>
+                                            </td>
+                                        </tr>
+                                        <t t-set="sno" t-value="sno+1" />
+                                    </t>
+                                    <tr>
+                                        <td colspan='3' class='text-right'>
+                                            <b>Total:</b>
+                                        </td>
+                                        <td class='text-right'>
+                                            <span t-field="doc.total_entry_encoding" t-field-options='{"widget": "monetary", "display_currency": "doc.currency_id"}'/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<!-- Bank Form view -->
+        <record id="acc_bank_account_form_view" model="ir.ui.view">
+            <field name="name">Bank Account</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="base.view_partner_bank_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="branch"/>
+                    <field name="swift_code"/>
+                    <field name="is_company_account"/>
+                </field>
+                <field name="acc_holder_name" position="after">
+                    <field name="iban_no"/>
+                </field>
+                <field name="acc_type" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>    
+            </field>
+        </record>
+    </data>
+</openerp>

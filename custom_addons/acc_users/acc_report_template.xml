@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template id="acc_layout">
+        <t t-if="not o" t-set="o" t-value="doc"/>
+
+        <t t-if="not company">
+            <!-- Multicompany -->
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t>
+
+        <div class="header">
+            <table class="table table-sm table-borderless">
+                <tr style="border-bottom:1px solid black">
+                	<td colspan='3' class='text-left'>
+                        <strong><span style="font-size:30px;" t-field="doc.company_id.name"/></strong><br/>
+                        <strong><span >TRN ID: <span t-field="doc.company_id.vat"/></span></strong><br/>
+                        <span><b>OFFICE:</b> <span  t-field="doc.company_id.street"/>, <span t-field="doc.company_id.street2"/>, <span t-field="doc.company_id.state_id.name"/>, <span t-field="doc.company_id.country_id.name"/>.</span><br/>
+                        <span><b>WAREHOUSE:</b> <span  t-field="doc.company_id.war_street"/>, <span t-field="doc.company_id.war_street2"/>, <span t-field="doc.company_id.war_state_id.name"/>, <span t-field="doc.company_id.war_country_id.name"/>.</span><br/>
+                        <b><span>EMAIL: </span></b><span t-field="doc.company_id.email"/><span>, accounts@accgulf.com</span><br/>
+                        <b><span>PHONE: </span></b><span t-field="doc.company_id.phone"/><br/>
+                        <b><span>BANK: </span></b><span t-field="doc.bank_account_id.bank_id.name"/>, <span t-field="doc.bank_account_id.branch"/><br/>
+                        <b><span>IBAN No: </span></b><span t-field="doc.bank_account_id.iban_no"/> [<span t-field="doc.bank_account_id.currency_id.name"/>]<br/>
+                        <b><span>ACC NAME: </span></b><span t-field="doc.bank_account_id.acc_holder_name"/><br/>
+                        <b><span> SWIFT CODE: </span></b><span t-field="doc.bank_account_id.swift_code"/>
+                    </td>
+                    <td class='text-right'>
+                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % to_text(company.logo)" style="max-height: 200px;" />
+                    </td>
+                </tr>
+                <!-- <tr style="border-bottom:1px solid black">
+                    <td class="text-center" colspan='4'>
+                        <b>BANK: </b> 
+                        <span t-field="doc.bank_account_id.bank_id.name"/>, <span t-field="doc.bank_account_id.branch"/>
+                        IBAN No: <span t-field="doc.bank_account_id.iban_no"/> [<span t-field="doc.bank_account_id.currency_id.name"/>], 
+                        Acc Name: <span t-field="doc.bank_account_id.acc_holder_name"/>, Swift Code: <span t-field="doc.bank_account_id.swift_code"/>.
+                    </td>
+                </tr> -->
+            </table>
+        </div>
+        <div class="article" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+          <t t-raw="0"/>
+        </div>
+        <div class="footer">
+            <table style="width:100% !important">
+                <tr>
+                    <td class="text-center" colspan='2' style="border-top:1px solid black">
+                        <img t-if="company.brand_footer" t-att-src="'data:image/png;base64,%s' % to_text(company.brand_footer)" style="height: 100px;width:1300px" />
+                    </td>
+                </tr>
+            </table>
+       </div>
+    </template>
+
+    <template id="acc_layout1">
+        <t t-if="not o" t-set="o" t-value="doc"/>
+
+        <t t-if="not company">
+            <!-- Multicompany -->
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t>
+
+        <div class="header">
+            <table class="table table-sm table-borderless">
+                <tr style="border-bottom:1px solid black">
+                    <td colspan='3' class='text-left'>
+                        <strong><span style="font-size:30px;" t-field="doc.company_id.name"/></strong><br/>
+                        <strong><span >TRN ID: <span t-field="doc.company_id.vat"/></span></strong><br/>
+                        <span><b>OFFICE:</b> <span  t-field="doc.company_id.street"/>, <span t-field="doc.company_id.street2"/>, <span t-field="doc.company_id.state_id.name"/>, <span t-field="doc.company_id.country_id.name"/>.</span><br/>
+                        <span><b>WAREHOUSE:</b> <span  t-field="doc.company_id.war_street"/>, <span t-field="doc.company_id.war_street2"/>, <span t-field="doc.company_id.war_state_id.name"/>, <span t-field="doc.company_id.war_country_id.name"/>.</span><br/>
+                        <b><span>EMAIL: </span></b><span t-field="doc.company_id.email"/><span>, accounts@accgulf.com</span><br/>
+                        <b><span>PHONE: </span></b><span t-field="doc.company_id.phone"/><br/>
+                    </td>
+                    <td class='text-right'>
+                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % to_text(company.logo)" style="max-height: 200px;" />
+                    </td>
+                </tr>
+                <!-- <tr style="border-bottom:1px solid black">
+                    <td class="text-center" colspan='4'>
+                        <b>BANK: </b> 
+                        <span t-field="doc.bank_account_id.bank_id.name"/>, <span t-field="doc.bank_account_id.branch"/>
+                        IBAN No: <span t-field="doc.bank_account_id.iban_no"/> [<span t-field="doc.bank_account_id.currency_id.name"/>], 
+                        Acc Name: <span t-field="doc.bank_account_id.acc_holder_name"/>, Swift Code: <span t-field="doc.bank_account_id.swift_code"/>.
+                    </td>
+                </tr> -->
+            </table>
+        </div>
+        <div class="article" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+          <t t-raw="0"/>
+        </div>
+        <div class="footer">
+            <table style="width:100% !important">
+                <tr>
+                    <td class="text-center" colspan='2' style="border-top:1px solid black">
+                        <img t-if="company.brand_footer" t-att-src="'data:image/png;base64,%s' % to_text(company.brand_footer)" style="height: 100px;width:1300px" />
+                    </td>
+                </tr>
+            </table>
+       </div>
+    </template>
+</odoo>

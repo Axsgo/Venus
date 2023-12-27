@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+		
+    	<!-- purchase Form view -->
+        <record id="trip_purchase_order_form_view" model="ir.ui.view">
+            <field name="name">Purchase Order</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="purchase_type" widget="radio"/>
+                    <field name="trip_id" attrs="{'required':[('purchase_type','=','trip')],'invisible':[('purchase_type','=','direct')]}"/>
+                </field>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='analytic_tag_ids']" position="after">
+	                <field name="purchase_qty"/>
+	                <field name="free_qty"/>
+	            </xpath>
+	            <xpath expr="//field[@name='order_line']/tree/field[@name='product_qty']" position="attributes">
+	                <attribute name="string">Total Qty</attribute>
+	            </xpath>
+	            <page name="purchase_delivery_invoice" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </page>
+                <page name="products" position="after">
+                	<page string = "Product Update">
+						<group>
+							<group>
+								<field name = "free_price_unit"/>
+							</group>
+							<group>
+								<field name = "free_avg_price_unit"/>
+							</group>
+							<button name="update_po_line" type="object" string="Update Products"/>
+							<button name="clear_list" type="object" string="Clear List"/>
+						</group>
+						<field name="free_line_ids">
+							<tree editable='bottom'>
+								<field name = "product_id"/>
+								<field name = "purchase_qty"/>
+								<field name = "free_qty"/>
+								<field name = "product_qty"/>
+								<field name = "product_uom"/>
+								<field name = "product_uom_category_id" invisible="1"/>
+							</tree>
+						</field>
+					</page>
+				</page>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+		
+    	<!-- Sale Form view -->
+        <record id="trip_sale_order_form_view" model="ir.ui.view">
+            <field name="name">Sale Order</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+				<xpath expr="//button[@name='action_confirm']" position="after">
+                    <button name="create_all_delivery_and_invoices" string="Post in one time" states="draft,sent"
+                            type="object" class="btn-primary" />
+                </xpath>
+                <field name="partner_id" position="after">
+					<field name="sale_type" widget="radio"/>
+                    <field name="trip_id" attrs="{'required':[('sale_type','=','trip')],'invisible':[('sale_type','=','direct')]}"/>
+                    <field name="user_id" />
+                    <field name="fiscal_position_id" string="Vat Supply To"/>
+                </field>
+                <page name="other_information" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </page>
+                <page name="customer_signature" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </page>
+            </field>
+        </record>
+        
+        <record id="trip_sale_order_form_quote" model="ir.ui.view">
+            <field name="name">Sale Order</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_management.sale_order_form_quote"/>
+            <field name="arch" type="xml">
+                <page name="optional_products" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </page>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Form view -->
+        <record id="account_code_form_view" model="ir.ui.view">
+            <field name="name">Account Code</field>
+            <field name="model">account.code</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Account Code">
+                    <sheet>  
+                        <group> 
+                            <group>
+                                <field name="name" invisible='1'/>
+                                <field name="user_type_id" widget="account_hierarchy_selection" required="1"/>
+                                <field name="internal_group" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="code" required='1' readonly='1' force_save='1'/>
+                                <field name="notes" />
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string = "Entry Info">
+                                <group>
+                                    <group>
+                                        <field name="company_id" force_save='1' readonly="1"/>
+                                    </group>
+                                    <group></group>
+                                    <group>
+                                        <field name = "user_id"/>
+                                        <field name = "update_user_id"/>
+                                    </group>
+                                    <group>
+                                        <field name = "crt_date"/>
+                                        <field name = "update_date"/>
+                                    </group>
+                                </group>
+                            </page>     
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- Tree View -->
+        <record id="account_code_tree_view" model="ir.ui.view">
+            <field name="name">Account Code</field>
+            <field name="model">account.code</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+             <tree string="Account Code" default_order = "crt_date desc"> 
+                <field name="crt_date"/>
+                <field name="user_id"/>
+                <field name="user_type_id"/>
+                <field name="internal_group"/>
+                <field name="code"/>
+            </tree>
+            </field>
+        </record>
+        
+        <!-- Search View Start -->
+    
+    <record id="account_code_search_view" model="ir.ui.view">
+        <field name="name">Account Code</field>
+        <field name="model">account.code</field>
+        <field name="arch" type="xml">
+            <search string="Account Code">
+                <field name="name" string="Type"  filter_domain="[('name','ilike',self)]" />
+                <field name="code" string="Starting Sequence"  filter_domain="[('code','ilike',self)]" />
+            </search>
+        </field>
+    </record>
+    
+    <!-- Search View End -->
+
+
+        <record id="action_account_code" model="ir.actions.act_window">  
+            <field name="name">Account Code</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.code</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" ref="account_code_tree_view"></field>
+            <field name="search_view_id" ref="account_code_search_view"/>
+        </record>
+
+        <menuitem id="menu_account_code_config" sequence="15"
+                  name="Account Code" parent="account.account_account_menu" action="action_account_code"/>
+
+
+    <record id="account_account_code_tree_view_inherit" model="ir.ui.view">
+            <field name="name">Chart of Accounts</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_list"/>
+            <field name="arch" type="xml">
+                <field name="name" position="before">
+                    <field name="account_code"/>
+                </field>
+                <field name="name" position="after">
+                    <field name="sequence_number" optional="hide"/>
+                    <field name="account_code_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
+                </field>
+                <field name="code" position='attributes'>
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="internal_group" position='attributes'>
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="user_type_id" position="before">
+                    <field name="internal_group" string="Category"/>
+                </field>
+                <field name="user_type_id" position='attributes'>
+                    <attribute name="invisible">1</attribute>
+                </field>
+            </field>
+        </record>
+
+    <record id="account_account_code_form_view_inherit" model="ir.ui.view">
+            <field name="name">Chart of Accounts</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[2]" position="replace">
+                    <div class="oe_title">
+                           <h1 class= "oe_read_only">
+                             <field name="code" placeholder="code"/> - <field name="name" placeholder="name"/>
+                             <field name="company_id" invisible="1"/>
+                           </h1>
+                           <div class="oe_inline oe_edit_only">
+                             <label for="code" invisible="1"/>
+                             <field name="code" placeholder="code" invisible="1"/>
+                             <label for="name"/>
+                             <field name="name" placeholder="name"/>
+                           </div>
+                       </div>
+                </xpath>
+                <field name="user_type_id" position="before">
+                    <field name="account_code_id" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True}"/>
+                </field>
+                <field name="user_type_id" position='attributes'>
+                    <attribute name="readonly">0</attribute>
+                </field>
+                <field name="group_id" position='attributes'>
+                    <attribute name="readonly">0</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="account.view_account_search" model="ir.ui.view">
+            <field name="name">account.account.search</field>
+            <field name="model">account.account</field>
+            <field name="arch" type="xml">
+                <search string="Accounts">
+                    <field name="name" filter_domain="['|', ('name','ilike',self), ('code','=like',str(self)+'%')]" string="Account"/>
+                    <filter string="Receivable Accounts" name="receivableacc" domain="[('internal_type','=','receivable')]"/>
+                    <filter string="Payable Accounts" name="payableacc" domain="[('internal_type','=','payable')]"/>
+                    <filter string="Equity" name="equityacc" domain="[('internal_group','=', 'equity')]"/>
+                    <filter string="Assets" name="assetsacc" domain="[('internal_group','=', 'asset')]"/>
+                    <filter string="Liability" name="liabilityacc" domain="[('internal_group','=', 'liability')]"/>
+                    <filter string="Income" name="incomeacc" domain="[('internal_group','=', 'income')]"/>
+                    <filter string="Expenses" name="expensesacc" domain="[('internal_group','=', 'expense')]"/>
+                    <separator/>
+                    <filter string="Account with Entries" name="used" domain="[('used', '=', True)]"/>
+                    <filter string="Active Account" name="activeacc" domain="[('deprecated', '=', False)]"/>
+                    <separator/>
+                    <field name="user_type_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Account Type" name="accounttype" domain="" context="{'group_by':'user_type_id'}"/>
+                        <filter string="Account Category" name="accountcategory" domain="" context="{'group_by':'internal_group'}"/>
+                    </group>
+                    <searchpanel class="account_root">
+                        <field name="root_id" icon="fa-filter" limit="0"/>
+                    </searchpanel>
+                </search>
+            </field>
+        </record>
+
+        <record id="account.action_account_form" model="ir.actions.act_window">
+            <field name="name">Chart of Accounts</field>
+            <field name="res_model">account.account</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="search_view_id" ref="account.view_account_search"/>
+            <field name="view_id" ref="account.view_account_list"/>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Add a new account
+              </p><p>
+                An account is part of a ledger allowing your company
+                to register all kinds of debit and credit transactions.
+                Companies present their annual accounts in two main parts: the
+                balance sheet and the income statement (profit and loss
+                account). The annual accounts of a company are required by law
+                to disclose a certain amount of information.
+              </p>
+            </field>
+            <field name="context">{'search_default_activeacc': True,'group_by':['internal_group', 'user_type_id']}</field>
+        </record>
+        
+    </data>
+</openerp>

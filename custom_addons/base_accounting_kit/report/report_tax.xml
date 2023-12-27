@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_tax">
+        <t t-call="web.html_container">
+            <t t-set="data_report_margin_top" t-value="35"/>
+            <t t-set="data_report_margin_bottom" t-value="20"/>
+            <t t-set="data_report_header_spacing" t-value="35"/>
+            <t t-set="data_report_margin_left" t-value="0"/>
+            <t t-set="data_report_margin_right" t-value="0"/>
+            <t t-set="data_report_orientation" t-value="Portrait"/>
+            <t t-set="data_report_dpi" t-value="140"/>
+            <!-- <div class="header">
+                    <table class="table table-sm table-borderless">
+                        <tr style="border-bottom:1px solid black">
+                            <td class='text-center'>
+                                <img t-if="env.company.logo" t-att-src="'data:image/png;base64,%s' % to_text(env.company.logo)" style="max-height: 120px;" />
+                            </td>
+                            <td colspan='3' class='text-center'>
+                                <strong><span style="font-size:30px;margin-right:200px" t-esc="env.company.name"/></strong><br/>
+                                <strong><span style="margin-right:200px">TRN ID: <span t-esc="env.company.vat"/></span></strong><br/>
+                                <span style="margin-right:200px"><b>OFFICE:</b> <span  t-esc="env.company.street"/>, <span t-esc="env.company.street2"/>, <span t-esc="env.company.state_id.name"/>, <span t-esc="env.company.country_id.name"/>.</span><br/>
+                                <span style="margin-right:200px"><b>WAREHOUSE:</b> <span  t-esc="env.company.war_street"/>, <span t-esc="env.company.war_street2"/>, <span t-esc="env.company.war_state_id.name"/>, <span t-esc="env.company.war_country_id.name"/>.</span><br/>
+                                <span style="margin-right:200px">Email: <span t-esc="env.company.email"/>, accounts@accgulf.com | <span>Phone: </span><span t-esc="env.company.phone"/>.</span>
+                            </td>
+                        </tr>
+                    </table>
+            </div> -->
+            <div class="header">
+                <table class="table table-sm table-borderless">
+                    <tr style="border-bottom:1px solid black">
+                        <td colspan='3' class='text-left'>
+                            <strong><span style="font-size:30px;" t-field="env.company.name"/></strong><br/>
+                            <strong><span >TRN ID: <span t-field="env.company.vat"/></span></strong><br/>
+                            <span><b>OFFICE:</b> <span  t-field="env.company.street"/>, <span t-field="env.company.street2"/>, <span t-field="env.company.state_id.name"/>, <span t-field="env.company.country_id.name"/>.</span><br/>
+                            <span><b>WAREHOUSE:</b> <span  t-field="env.company.war_street"/>, <span t-field="env.company.war_street2"/>, <span t-field="env.company.war_state_id.name"/>, <span t-field="env.company.war_country_id.name"/>.</span><br/>
+                            <b><span>EMAIL: </span></b><span t-field="env.company.email"/><span>, accounts@accgulf.com</span><br/>
+                            <b><span>PHONE: </span></b><span t-field="env.company.phone"/><br/>
+                        </td>
+                        <td class='text-right'>
+                            <img t-if="env.company.logo" t-att-src="'data:image/png;base64,%s' % to_text(env.company.logo)" style="max-height: 200px;" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <t t-call="web.basic_layout">
+                <div class="page">
+                    <!-- <h3>Tax Report</h3> -->
+                    <!-- <div class="row">
+                        <div class="col-3">
+                            <strong>Company:</strong>
+                            <p t-esc="env.company.name"/>
+                        </div>
+                        <div>
+                            <t t-if="data['date_from']">
+                                <strong>Date from :</strong>
+                                <span t-esc="data['date_from']"/>
+                            </t>
+                            <br/>
+                            <t t-if="data['date_to']">
+                                <strong>Date to :</strong>
+                                <span t-esc="data['date_to']"/>
+                            </t>
+                        </div>
+                    </div> -->
+                    <table style="margin-top:15px" class="table table-borderless table-sm">
+                            <tr>
+                                <td colspan='4' style="background-color:#ff9800;border:1px solid black !important;font-weight:bold;vertical-align:middle">
+                                    <h5><center>Tax Report</center></h5>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%;border: 1px solid black !important;vertical-align:middle">
+                                    From Date :
+                                </td>
+                                <td style="width:30%;border: 1px solid black !important;vertical-align:middle">
+                                    <b><t t-if="data['date_from']"><t t-esc="data['date_from']" class='text-left' t-options="{&quot;widget&quot;: &quot;date&quot;}"/></t></b>
+                                </td>
+                                <td style="width:20%;border: 1px solid black !important;vertical-align:middle">
+                                    To Date :
+                                </td>
+                                <td style="width:30%;border: 1px solid black !important;vertical-align:middle">
+                                    <b><t t-if="data['date_to']"><t t-esc="data['date_to']" class='text-left' t-options="{&quot;widget&quot;: &quot;date&quot;}"/></t></b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%;border: 1px solid black !important;vertical-align:middle">
+                                    Company:
+                                </td>
+                                <td style="width:30%;border: 1px solid black !important;vertical-align:middle">
+                                    <b><t t-esc="env.company.name" class='text-left'/></b>
+                                </td>
+                                <td style="width:20%;border: 1px solid black !important;vertical-align:middle">
+                                    Currency :
+                                </td>
+                                <td style="width:30%;border: 1px solid black !important;vertical-align:middle">
+                                    <b><t t-esc="env.company.currency_id.name" class='text-left'/></b>
+                                </td>
+                            </tr>
+        
+                        </table>
+                    <!-- <table class="table table-sm table-reports">
+                        <thead>
+                            <tr align="left">
+                                <th>Sale</th>
+                                <th>Net</th>
+                                <th>Tax</th>
+                            </tr>
+                        </thead>
+                        <tr align="left" t-foreach="lines['sale']" t-as="line">
+                            <td>
+                                <span t-esc="line.get('name')"/>
+                            </td>
+                            <td>
+                                <span t-att-style="style" t-esc="line.get('net')"
+                                      t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                            </td>
+                            <td>
+                                <span t-att-style="style" t-esc="line.get('tax')"
+                                      t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                            </td>
+                        </tr>
+                        <br/>
+                        <tr align="left">
+                            <td>
+                                <strong>Purchase</strong>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr align="left" t-foreach="lines['purchase']" t-as="line">
+                            <td>
+                                <span t-esc="line.get('name')"/>
+                            </td>
+                            <td>
+                                <span t-att-style="style" t-esc="line.get('net')"
+                                      t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                            </td>
+                            <td>
+                                <span t-att-style="style" t-esc="line.get('tax')"
+                                      t-options="{'widget': 'monetary', 'display_currency': env.company.currency_id}"/>
+                            </td>
+                        </tr>
+                    </table> -->
+                    <table style="margin-top:20px;width:100% !important;">
+                        <tr>
+                            <b><td style="border:1px solid black !important;background-color:#ff9800;color: black;" class="text-center" colspan='3'>VAT on Sales and all other Outputs</td>
+                            </b>
+                        </tr>
+                        <tr>
+                            <b>
+                            <td style="border:1px solid black !important;background-color:#ff9800;width:6% !important;color: black;" class="text-center">Particulars</td>
+                            <td style="border:1px solid black !important;background-color:#ff9800;width:6% !important;color: black;" class="text-center">Amount</td>
+                            <td style="border:1px solid black !important;background-color:#ff9800;width:6% !important;color: black;" class="text-center">VAT Amount</td>
+                            </b>
+                        </tr>
+                        <tbody class="tax_report">
+                            <t t-set="tot_amount" t-value="0.00" />
+                            <t t-set="tax_amount_sale" t-value="0.00" />
+                            <t t-foreach="lines['sale']" t-as="line">
+                                <tr>
+                                    <td style="border:1px solid black !important;text-align:left">
+                                        <span t-esc="line.get('report_name')"/>
+                                    </td>
+                                    <td style="border:1px solid black !important;text-align:right">
+                                        <t t-if="line.get('net')">
+                                            <span t-esc="'{:,.2f}'.format(line.get('net'))"/>
+                                        </t>
+                                        <t t-else="">
+                                            -
+                                        </t>
+                                    </td>
+                                    <td style="border:1px solid black !important;text-align:right">
+                                        <t t-if="line.get('tax')">
+                                            <span t-esc="'{:,.2f}'.format(line.get('tax'))"/>
+                                        </t>
+                                        <t t-else="">
+                                            -
+                                        </t>
+                                    </td>
+                                    <t t-set="tot_amount" t-value="tot_amount+line.get('net')" />
+                                    <t t-set="tax_amount_sale" t-value="tax_amount_sale+line.get('tax')" />
+                                </tr>
+                            </t>
+                            <tr>
+                                <td style="border:1px solid black !important;text-align:right">
+                                    <strong>Total</strong>
+                                </td>
+                                <td style="border:1px solid black !important;text-align:right">
+                                    <strong><span t-esc="'{:,.2f}'.format(tot_amount)" /></strong>
+                                </td>
+                                <td style="border:1px solid black !important;text-align:right">
+                                    <strong><span t-esc="'{:,.2f}'.format(tax_amount_sale)" /></strong>
+                                </td>
+                            </tr>
+                         </tbody>
+                    </table>
+                    <table style="margin-top:10px;width:100% !important;">
+                        <tr>
+                            <b><td style="border:1px solid black !important;background-color:#ff9800;color: black;" class="text-center" colspan='3'>VAT on Expenses and all other Inputs</td>
+                            </b>
+                        </tr>
+                        <tr>
+                            <b>
+                            <td style="border:1px solid black !important;background-color:#ff9800;width:6% !important;color: black;" class="text-center">Particulars</td>
+                            <td style="border:1px solid black !important;background-color:#ff9800;width:6% !important;color: black;" class="text-center">Amount</td>
+                            <td style="border:1px solid black !important;background-color:#ff9800;width:6% !important;color: black;" class="text-center">VAT Amount</td>
+                            </b>
+                        </tr>
+                        <tbody class="tax_report_purchase">
+                            <t t-set="tot_amount_purchase" t-value="0.00" />
+                            <t t-set="tax_amount_purchase" t-value="0.00" />
+                            <t t-foreach="lines['purchase']" t-as="line">
+                                <tr>
+                                    <td style="border:1px solid black !important;text-align:left">
+                                        <span t-esc="line.get('report_name')"/>
+                                    </td>
+                                    <td style="border:1px solid black !important;text-align:right">
+                                        <t t-if="line.get('net')">
+                                            <span t-esc="'{:,.2f}'.format(line.get('net'))"/>
+                                        </t>
+                                        <t t-else="">
+                                            -
+                                        </t>
+                                    </td>
+                                    <td style="border:1px solid black !important;text-align:right">
+                                        <t t-if="line.get('tax')">
+                                            <span t-esc="'{:,.2f}'.format(line.get('tax'))"/>
+                                        </t>
+                                        <t t-else="">
+                                            -
+                                        </t>
+                                    </td>
+                                    <t t-set="tot_amount_purchase" t-value="tot_amount_purchase+line.get('net')" />
+                                    <t t-set="tax_amount_purchase" t-value="tax_amount_purchase+line.get('tax')" />
+                                </tr>
+                            </t>
+                            <tr>
+                                <td style="border:1px solid black !important;text-align:right">
+                                    <strong>Total</strong>
+                                </td>
+                                <td style="border:1px solid black !important;text-align:right">
+                                    <strong><span t-esc="'{:,.2f}'.format(tot_amount_purchase)" /></strong>
+                                </td>
+                                <td style="border:1px solid black !important;text-align:right">
+                                    <strong><span t-esc="'{:,.2f}'.format(tax_amount_purchase)" /></strong>
+                                </td>
+                            </tr>
+                         </tbody>
+                    </table>
+                    <table style="margin-top:10px" class="table table-borderless table-sm">
+                            <tr>
+                                <td colspan='2' style="background-color:#ff9800;border:1px solid black !important;text-align:left">
+                                    <strong>Net VAT due</strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid black !important;text-align:left">
+                                    Total Value of due tax for the period
+                                </td>
+                                <td style="border:1px solid black !important;text-align:right">
+                                    <span t-esc="'{:,.2f}'.format(tax_amount_sale)" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid black !important;text-align:left">
+                                    Total Recoverable Tax for the period
+                                </td>
+                                <td style="border:1px solid black !important;text-align:right">
+                                    <span t-esc="'{:,.2f}'.format(tax_amount_purchase)" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:1px solid black !important;text-align:left">
+                                    <strong>NET VAT payable  for the period</strong>
+                                </td>
+                                <td style="border:1px solid black !important;text-align:right">
+                                    <strong><span t-esc="'{:,.2f}'.format(tax_amount_sale - tax_amount_purchase)" /></strong>
+                                </td>
+                            </tr>
+                        </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

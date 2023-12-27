@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    	<!-- Form view -->
+        <record id="venus_driver_form_view" model="ir.ui.view">
+            <field name="name">driver</field>
+            <field name="model">venus.driver</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+				<form string="Driver">
+					<header>
+						<button name = "entry_approve" type = "object" string = "Approve" states = "draft" class = "oe_highlight"/>
+						<button name = "entry_draft" type = "object" string = "Set to Draft" states = "approved"/>
+						<button name = "entry_cancel" type = "object" string = "Cancel" states = "draft"/>
+						<field name="state" widget="statusbar" statusbar_visible='draft,approved,cancel'/>
+					</header>
+					<sheet> 
+						<group> 
+							<group>
+								<field name="name" required='1' attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="dob" required='1' attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="phone" required='1' attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="licence" required='1' attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="licence_expiry" required='1' attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="vehicle_id" required='1' attrs="{'readonly':[('state','!=','draft')]}"/>
+							</group>
+						</group>
+						<notebook>
+							<page string = "Entry Info">
+								<group>
+									<group>
+										<field name="company_id" force_save='1' options="{'no_create': True, 'no_create_edit':True}" groups="base.group_multi_company"/>
+									</group>
+									<group></group>
+									<group>
+										<field name = "user_id"/>
+										<field name = "update_user_id"/>
+										<field name = "ap_rej_user_id"  attrs = "{'invisible':[('state','=','draft')]}"/>
+										<field name = "cancel_user_id"  attrs = "{'invisible':[('state','!=','cancel')]}"/>
+									</group>
+									<group>
+										<field name = "crt_date"/>
+										<field name = "update_date"/>
+										<field name = "ap_rej_date"  attrs = "{'invisible':[('state','=','draft')]}"/>
+										<field name = "cancel_date"  attrs = "{'invisible':[('state','!=','cancel')]}"/>
+									</group>
+								</group>
+							</page>		
+						</notebook>
+					</sheet>
+				</form>
+            </field>
+        </record>
+        
+        <!-- Tree View -->
+        <record id="venus_driver_tree_view" model="ir.ui.view">
+            <field name="name">Driver</field>
+            <field name="model">venus.driver</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+             	<tree string="Driver" default_order = "id desc"> 
+					<field name="name"/>
+					<field name="dob"/>
+					<field name="phone"/>
+					<field name="licence"/>
+					<field name="licence_expiry"/>
+					<field name="vehicle_id"/>	 
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Search View Start -->
+		<record id="venus_driver_search_view" model="ir.ui.view">
+			<field name="name">Driver</field>
+			<field name="model">venus.driver</field>
+			<field name="arch" type="xml">
+				<search string="Driver">
+					<field name="name" string="Name"  filter_domain="[('name','ilike',self)]" />
+				</search>
+			</field>
+		</record>
+	
+		<!-- Search View End -->
+        <record id="action_venus_driver" model="ir.actions.act_window">  
+            <field name="name">Driver</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">venus.driver</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" ref="venus_driver_tree_view"></field>
+            <field name="search_view_id" ref="venus_driver_search_view"/>
+        </record>
+
+        <!-- Menuitems -->
+    	<menuitem name="Driver" id="pm_venus_driver" parent="mt_venus_masters.sales_tpm_masters" action="action_venus_driver" sequence='2'/>
+
+    </data>
+</odoo>

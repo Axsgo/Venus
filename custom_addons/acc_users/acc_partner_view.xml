@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<!-- Partner Form view -->
+        <record id="acc_partner_form_view" model="ir.ui.view">
+            <field name="name">Partner</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <div name="button_box" position="inside">
+                    <button type="object" class="oe_stat_button" icon="fa-pencil-square-o" name="action_view_pending_credit_invoices">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="pending_credit_invoice_ids" invisible="1"/>
+                                <field name="total_pending_credit_invoices"/>
+                            </span>
+                            <span class="o_stat_text">On Account Credit Invoices</span>
+                        </div>
+                    </button>
+                    <button type="object" class="oe_stat_button" icon="fa-money" name="action_view_pending_payments">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="pending_payment_ids" invisible="1"/>
+                                <field name="total_pending_payments"/>
+                            </span>
+                            <span class="o_stat_text">On Account Payments</span>
+                        </div>
+                    </button>
+                </div>
+                <xpath expr="//sheet" position="before">
+                    <header>
+                        <button name="entry_move_permanent" string="Move to Permanent" type="object" class="oe_highlight" attrs="{'invisible':[('is_temp_partner','=',False)]}"/>
+                    </header>
+                </xpath>
+                <field name="type" position="after">
+                    <field name="customer_rank" invisible='1'/>
+                    <field name="supplier_rank" invisible='1'/>
+                    <field name="partner_no" readonly='1' force_save='1' attrs="{'invisible':['&amp;',('customer_rank','=',0),('supplier_rank','=',0)]}"/>
+                    <!-- <field name="partner_acc_no" attrs="{'invisible':['&amp;',('supplier_rank','=',0),('customer_rank','=',0)]}"/> -->
+                    <field name="is_temp_partner" groups="acc_users.group_temp_partner" invisible='1'/>
+                    <!-- <field name="customer_type" attrs="{'invisible':[('customer_rank','=',0)],'required':['&amp;',('is_temp_partner','=',False),('customer_rank','&gt;',0)]}"/>
+                    <field name="partner_type" attrs="{'invisible':[('customer_rank','=',0)],'required':['&amp;',('is_temp_partner','=',False),('customer_rank','&gt;',0)]}"/> -->
+                    <!-- <field name="product_categ_id" options="{'no_open':True,'no_create':True}" domain="[('parent_id','=',False)]" attrs="{'invisible':['&amp;',('customer_rank','=',0),('supplier_rank','=',0)]}"/> -->
+                    <field name="crt_date" invisible='1'/>
+                </field>
+                <field name="company_type" position="attributes">
+                    <attribute name='invisible'>1</attribute>
+                </field>
+                <field name="state_id" position="attributes">
+                    <attribute name="options">{'no_create':True,'no_open':True}</attribute>
+                </field>
+                <field name="phone" position="attributes">
+                    <attribute name="required">1</attribute>
+                </field>
+                <field name="country_id" position="attributes">
+                    <attribute name="options">{'no_create':True,'no_open':True}</attribute>
+                </field>
+                <field name="country_id" position="attributes">
+                    <attribute name="attrs">{'required':[('is_temp_partner','=',False)]}</attribute>
+                </field>
+                <field name="state_id" position="attributes">
+                    <attribute name="placeholder">Emirates / States</attribute>
+                </field>
+                <field name="website" position="attributes">
+                    <attribute name="placeholder">eg: https://www.axsgo.com</attribute>
+                </field>
+                <field name='city' position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="city" position="after">
+                    <field name="city_id" options="{'no_open':True,'no_quick_create':True}" placeholder="City" class="o_address_city" attrs="{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}"/>
+                </field>
+                <field name="user_ids" position="after">
+                    <field name="fax"/>
+                </field>
+                <field name="vat" position="attributes">
+                    <attribute name="string">VAT</attribute>
+                </field>
+                <!-- <field name="user_id" position="replace">
+                    <field name="user_id" required='1' options="{'no_open':True,'no_quick_create':True}"/>
+                </field> -->
+                <xpath expr="//page[@name='sales_purchases']/group/group/field[@name='user_id']" position="replace">
+                    <field name="user_id" attrs="{'required':[('customer_rank','&gt;',0)]}" options="{'no_open':True,'no_create':True}"/>
+                </xpath>
+                <field name="team_id" position="attributes">
+                    <attribute name="options">{'no_create':True}</attribute>
+                </field>
+                <field name="vat" position="after">
+					<field name="currency_dummy_id"/>
+                    <field name="vat_document" filename="vat_document_filename"/>
+                    <field name="vat_document_filename" invisible='1'/>
+                </field>
+                <!-- <field name="vat" position="before">
+                    <field name="direct_sale_margin"/>
+                </field> -->
+                <!-- <field name="email" position="after">
+                    <field name="email1" widget="email" context="{'gravatar_image': True}"/>
+                    <field name="email2" widget="email" context="{'gravatar_image': True}"/>
+                </field> -->
+                <field name="category_id" position="after">
+                    <!-- <field name="document1" filename="document1_filename"/>
+                    <field name="document1_filename" invisible='1'/>
+                    <field name="document2" filename="document2_filename"/>
+                    <field name="document2_filename" invisible='1'/>
+                    <field name="document3" filename="document3_filename"/>
+                    <field name="document3_filename" invisible='1'/>
+                    <field name="document4" filename="document4_filename"/>
+                    <field name="document4_filename" invisible='1'/> -->
+                    <!-- <field name="document_ids">
+                        <tree string="Documents" editable="bottom">
+                            <field name="name"/>
+                            <field name="document" filename="filename"/>
+                            <field name="filename" invisible='1'/>
+                        </tree>
+                    </field> -->
+                     <field name="attachment_ids" widget="many2many_binary" string="Attach files"/>
+                     <!-- <field name="trader_name"/> -->
+                </field>
+                <field name="child_ids" position="attributes">
+                    <attribute name="context">{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2, 'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_lang': lang, 'default_user_id': user_id, 'default_type': 'delivery','default_city_id':city_id}</attribute>
+                </field>
+                <group name="purchase" position="attributes">
+                    <attribute name="attrs">{'invisible':[('customer_rank','&gt;',0)]}</attribute>
+                </group>
+                <group name="sale" position="attributes">
+                    <attribute name="attrs">{'invisible':[('supplier_rank','&gt;',0)]}</attribute>
+                </group>
+                <field name="zip" position="attributes">
+                    <attribute name="placeholder">P.O BOX</attribute>
+                </field>
+            </field>
+        </record>
+
+        <!-- Partner Form view -->
+        <record id="acc_property_partner_form_view" model="ir.ui.view">
+            <field name="name">Partner</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">
+                <field name="property_payment_term_id" position="attributes">
+                    <attribute name="attrs">{'required':[('customer_rank','&gt;',0)]}</attribute>
+                </field>
+                <field name="property_supplier_payment_term_id" position="attributes">
+                    <attribute name="attrs">{'required':[('supplier_rank','&gt;',0)]}</attribute>
+                </field>
+               <!--  <field name="property_payment_term_id" position="after">
+                    <field name="property_payment_due_days"/>
+                </field>
+                <field name="property_supplier_payment_term_id" position="after">
+                    <field name="property_supplier_payment_due_days"/>
+                </field> -->
+                <field name="property_account_position_id" position="attributes">
+                    <attribute name="string">VAT Supply To</attribute>
+                </field>
+            </field>
+        </record>
+
+        <!-- Partner Tree view -->
+        <record id="acc_partner_tree_view" model="ir.ui.view">
+            <field name="name">Partner</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <field name="display_name" position='before'>
+                    <!-- <field name="partner_acc_no"/> -->
+                    <field name="partner_no"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Partner search view -->
+        <record id="acc_partner_search_view" model="ir.ui.view">
+            <field name="name">Partner</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <field name="name" position='replace'>
+                    <field name="name" filter_domain="['|', '|','|',('partner_no','ilike',self), ('display_name', 'ilike', self), ('ref', '=', self), ('email', 'ilike', self)]"/>
+                </field>
+               <!--  <filter name="group_country" position="after">
+                    <filter name="group_partner_type" string="Export Type" context="{'group_by': 'partner_type'}"/>
+                    <filter name="group_customer_type" string="Customer Type" context="{'group_by': 'customer_type'}"/>
+                </filter> -->
+            </field>
+        </record>
+
+        <record id="account.res_partner_action_customer" model="ir.actions.act_window">
+            <field name="name">Customers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="context">{'search_default_customer': 1,'res_partner_search_mode': 'customer', 'default_is_company': True, 'default_customer_rank': 1,'search_default_type_company':1}</field>
+            <field name="domain">[('is_temp_partner','=',False)]</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new customer in your address book
+              </p><p>
+                Axsgo helps you easily track all activities related to a customer.
+              </p>
+            </field>
+        </record>
+
+        <record id="acc_temp_partner_action_customer" model="ir.actions.act_window">
+            <field name="name">Walk-in Customers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="context">{'search_default_customer': 1,'res_partner_search_mode': 'customer', 'default_is_company': True, 'default_customer_rank': 1,'search_default_type_company':1,'default_is_temp_partner':True}</field>
+            <field name="domain">[('is_temp_partner','=',True)]</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new customer in your address book
+              </p><p>
+                Axsgo helps you easily track all activities related to a customer.
+              </p>
+            </field>
+        </record>
+
+        <menuitem
+            id="pm_acc_temp_partner"
+            name="Walk-in Customers"
+            action="acc_temp_partner_action_customer"
+            parent="sale.sale_order_menu"
+            sequence="5" groups="acc_users.group_temp_partner"/>
+
+        <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
+            <field name="name">Suppliers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="context">{'search_default_supplier': 1,'res_partner_search_mode': 'supplier', 'default_is_company': True, 'default_supplier_rank': 1,'search_default_type_company':1}</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new supplier in your address book
+              </p><p>
+                Axsgo helps you easily track all activities related to a supplier.
+              </p>
+            </field>
+        </record>
+
+        <!-- Partner Mail sequence no -->
+        <record id="sequence_acc_partner" model="ir.sequence">
+            <field name="name">Partner Sequence</field>
+            <field name="code">res.partner</field>
+            <field name="prefix">P</field>
+            <field name="padding">4</field>
+            <field name="implementation">no_gap</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Walkin Customer Mail sequence no -->
+        <record id="sequence_acc_walkin_customer" model="ir.sequence">
+            <field name="name">Walkin Customer Sequence</field>
+            <field name="code">res.walkin.customer</field>
+            <field name="prefix">W</field>
+            <field name="padding">4</field>
+            <field name="implementation">no_gap</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="sequence_acc_customer" model="ir.sequence">
+            <field name="name">Customer Sequence</field>
+            <field name="code">res.customer</field>
+            <field name="prefix">C</field>
+            <field name="padding">5</field>
+            <field name="implementation">no_gap</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="sequence_acc_supplier" model="ir.sequence">
+            <field name="name">Supplier Sequence</field>
+            <field name="code">res.supplier</field>
+            <field name="prefix">S</field>
+            <field name="padding">5</field>
+            <field name="implementation">no_gap</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Cities Form view -->
+        <record id="acc_city_form_view" model="ir.ui.view">
+            <field name="name">Cities</field>
+            <field name="model">res.city</field>
+            <field name="inherit_id" ref="base_address_city.view_city_tree"/>
+            <field name="arch" type="xml">
+                <field name="zipcode" position="before">
+                    <field name="code" required='1'/>
+                </field>
+            </field>
+        </record>
+
+        <!-- State Form view -->
+        <!-- <record id="acc_state_form_view" model="ir.ui.view">
+            <field name="name">States</field>
+            <field name="model">res.country.state</field>
+            <field name="inherit_id" ref="base.view_country_state_tree"/>
+            <field name="arch" type="xml">
+                <field name="country_id" position="after">
+                    <field name="c_code"/>
+                </field>
+            </field>
+        </record> -->
+    </data>
+</openerp>

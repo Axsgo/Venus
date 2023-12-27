@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="sequence_ax_warehouse_rent" model="ir.sequence">
+            <field name="name">Warehouse Rent</field>
+            <field name="code">ax.warehouse.rent</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    	<!-- Form view -->
+        <record id="ax_warehouse_rent_form_view" model="ir.ui.view">
+            <field name="name">Warehouse Rent</field>
+            <field name="model">ax.warehouse.rent</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+				<form string="Warehouse Rent">
+					<header>
+						<button name = "entry_approve" type = "object" string = "Approve" class = "oe_highlight" states='draft' confirm="Are you sure you want to Approve?"/>
+						<button name = "entry_cancel" type = "object" string = "Cancel" states = "draft,approved"/>
+						<button name = "set_to_draft" type = "object" string = "Set to Draft" states = "approved"/>
+						<field name="state" widget="statusbar"/>
+					</header>
+					<sheet>
+					<div class="oe_title">
+                        <h2>
+                            <field name="name"/>
+                        </h2>
+                    </div> 
+						<group> 
+							<group>
+								<field name = "sq_feet_from" attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="partner_ids" widget="many2many_tags" attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name = "crt_date" readonly="1" string="Entry Date"/>
+							</group>
+							<group>
+								<field name = "sq_feet_to" attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name = "amount" attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name = "code" readonly="1"/>
+								<field name="company_id" options="{'no_create': True, 'no_create_edit':True}" readonly="1"/>
+							</group>
+						</group>
+						<notebook>		
+							<page string = "Entry Info">
+								<group>
+									<group>
+										<field name = "user_id"/>
+										<field name = "update_user_id"/>
+										<field name = "ap_rej_user_id"/>
+										<field name = "cancel_user_id"/>
+									</group>
+									<group>
+										<field name = "crt_date"/>
+										<field name = "update_date"/>
+										<field name = "ap_rej_date"/>
+										<field name = "cancel_date"/>
+									</group>
+								</group>
+							</page>		
+						</notebook>
+					</sheet>
+				</form>
+            </field>
+        </record>
+        <!-- Tree View -->
+        <record id="ax_warehouse_rent_tree_view" model="ir.ui.view">
+            <field name="name">Warehouse Rent</field>
+            <field name="model">ax.warehouse.rent</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+             <tree string="Warehouse Rent" default_order = "crt_date desc"> 
+             	<field name="name"/>
+				<field name="sq_feet_from"/>
+				<field name="sq_feet_to"/>
+				<field name="amount"/>
+				<field name="state"/>			 
+             </tree>
+            </field>
+        </record>
+
+        <record id="action_ax_warehouse_rent" model="ir.actions.act_window">  
+            <field name="name">Warehouse Rent</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ax.warehouse.rent</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" ref="ax_warehouse_rent_tree_view"></field>
+            <!-- <field name="context"></field> -->
+        </record>
+
+		<!-- Menuitems -->
+    	<menuitem id="pm_ax_warehouse_rent" name="Warehouse Rent" parent="acc_menus.tpm_masters" action="action_ax_warehouse_rent" sequence='21'/>
+            
+    </data>
+</openerp>

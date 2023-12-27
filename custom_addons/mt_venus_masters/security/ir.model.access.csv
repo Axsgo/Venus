@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_venus_vehicle,venus.vehicle,model_venus_vehicle,base.group_user,1,1,1,1
+access_venus_driver,venus.driver,model_venus_driver,base.group_user,1,1,1,1
+access_venus_trip,venus.trip,model_venus_trip,base.group_user,1,1,1,1
+access_venus_trip_log,venus.trip.log,model_venus_trip_log,base.group_user,1,1,1,1
+access_purchase_order_free,purchase.order.free,model_purchase_order_free,base.group_user,1,1,1,1
+access_venus_trip_location,venus.trip.location,model_venus_trip_location,base.group_user,1,1,1,1

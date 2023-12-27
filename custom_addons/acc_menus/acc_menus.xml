@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Customers -->
+        <menuitem name="Masters" id="tpm_masters" sequence='0'/>
+        <menuitem id="tpm_customer" parent="tpm_masters" name="Customers" sequence='1'/>
+        <menuitem id="sale.res_partner_menu" parent="tpm_customer" name = "Customers" action="account.res_partner_action_customer" sequence="1"/>
+        <menuitem id="acc_users.pm_acc_temp_partner" parent="tpm_customer" name = "Walk-in Customers" action="acc_users.acc_temp_partner_action_customer" sequence="2"/>
+        <!-- Vendors -->
+        <menuitem id="purchase.menu_procurement_management_supplier_name" parent="tpm_masters" name = "Suppliers" action="account.res_partner_action_supplier" sequence="2"/>
+        <!-- Product -->
+        <menuitem id="pm_products" parent="tpm_masters" sequence="3" name="Products"/>
+        <menuitem id="menu_product" name="Products" action="stock.product_template_action_product" parent="pm_products" sequence="1"/>
+        <!-- <menuitem id="menu_product_service" name="Service Charges" action="acc_stock.acc_product_template_action_service" parent="pm_products" sequence="2"/> -->
+    	<menuitem id="menu_product_product" name="Product Variants" action="stock.stock_product_normal_action" parent="pm_products" sequence="3" groups="product.group_product_variant"/>
+    	<menuitem action="product.product_category_action_form" id="menu_product_category" parent="pm_products" sequence="5"/>
+        <!-- <menuitem name="Product Sub-Category" id="pm_acc_product_sub_category" parent="pm_products" action="acc_masters.action_acc_product_sub_category" sequence='6'/> -->
+
+        <!-- Bank Menus -->
+        <menuitem name="Bank" id="pm_bank" parent="tpm_masters" sequence='20'/>
+<!--         <menuitem id="pm_config_bank_accounts"
+        name="Bank Accounts"
+        parent="pm_bank"
+        sequence="1"/> -->
+
+        <menuitem id="pm_action_res_bank_form"
+            action="base.action_res_bank_form"
+            parent="pm_bank"
+            sequence="1"/>
+
+        <menuitem id="pm_action_res_partner_bank_form"
+            action="base.action_res_partner_bank_account_form"
+            parent="pm_bank"
+            sequence="2"/>
+
+        <!-- menuitem Countries -->
+        <menuitem id="pm_countries" name="Regions" parent="tpm_masters" sequence='20'/>
+        <menuitem id="menu_country" name="Countries" parent="pm_countries" action="base.action_country" sequence='0'/>
+        <!-- <menuitem id="menu_country_group" name="Country Group" parent="pm_countries" action="base.action_country_group" sequence='1'/> -->
+        <menuitem id="menu_country_state" name="States" parent="pm_countries" action="base.action_country_state" sequence='2'/>
+        <!-- <menuitem name="Location" id="acc_masters.pm_acc_location" parent="pm_countries" action="acc_masters.action_acc_location_master" sequence='3'/> -->
+        <menuitem id="menu_city" name="City" parent="pm_countries" action="base_address_city.action_res_city_tree" sequence='3'/>
+
+        <menuitem id="sale.menu_sale_order_invoice"
+            action="sale.action_orders_to_invoice"
+            parent="sale.sale_order_menu"
+            sequence="3"/>
+
+
+<!-- **************************************************************** HIDDEN MENUS ************************************************************************** -->
+        <!-- Hidden Group -->
+        <record id="ax_group_hidden_menu" model="res.groups">
+            <field name="name">Hidden Menus</field>
+        </record>
+        <!-- Discuss -->
+        <menuitem
+        id="mail.menu_root_discuss"
+        name="Discuss"
+        action="mail.action_discuss"
+        groups="ax_group_hidden_menu"
+        sequence="100" active="False"
+        />
+        <!-- Calendar -->
+        <menuitem
+            id="calendar.mail_menu_calendar"
+            name="Calendar"
+            sequence="101"
+            action="calendar.action_calendar_event"
+            groups="ax_group_hidden_menu" active="False"/>
+        <!-- Link Tracker -->
+        <menuitem id="utm.menu_link_tracker_root"
+            name="Link Tracker"
+            sequence="102"
+            groups="ax_group_hidden_menu" active="False"/>
+
+        <menuitem action="sale.action_orders_upselling"
+            id="sale.menu_sale_order_upselling" parent="sale.menu_sale_invoicing"
+            sequence="5" active="False" groups="ax_group_hidden_menu"/>
+
+        <menuitem id="sale.report_sales_team"
+            name="Sales Teams"
+            parent="sale.sale_order_menu"
+            groups="ax_group_hidden_menu"
+            action="sales_team.crm_team_salesteams_act"
+            sequence="3" active="False"/>
+
+        <menuitem id="stock.menu_wms_barcode_nomenclature_all" parent="stock.menu_product_in_config_stock" action="barcodes.action_barcode_nomenclature_form"
+        sequence="50" groups="base.group_no_one" active="False"/>
+
+        <menuitem id="base.menu_custom" name="Technical" parent="base.menu_administration" sequence="110" groups="base.group_system"/>
+
+        <menuitem id="base.menu_translation" name="Translations" parent="base.menu_administration" sequence="2" groups="base.group_system"/>
+    </data>
+</openerp>

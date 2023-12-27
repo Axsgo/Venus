@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<!-- Form view -->
+        <record id="ax_sale_order_form_view_inherit1" model="ir.ui.view">
+            <field name="name">Sale Order</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="order_type" force_save='1' attrs="{'readonly':[('state','not in',('draft','sent'))]}" />
+                </field>
+                <xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='name']" position="after">
+                    <field name="sq_feet" />
+                    <field name="sq_feet_amt" />
+                </xpath>
+                <!-- <field name="pricelist_id" position='attributes'>
+                    <attribute name="required">0</attribute>
+                </field> -->
+            </field>
+        </record>
+
+    </data>
+</openerp>
+

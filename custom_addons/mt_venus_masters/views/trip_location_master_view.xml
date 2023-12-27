@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    	<!-- Form view -->
+        <record id="venus_trip_location_form_view" model="ir.ui.view">
+            <field name="name">Route Location</field>
+            <field name="model">venus.trip.location</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+				<form string="Route Location">
+					<sheet> 
+						<group> 
+							<group>
+								<field name="name" />
+							</group>
+							<group>
+								<field name="code" />
+							</group>
+						</group>
+					</sheet>
+				</form>
+            </field>
+        </record>
+        
+        <!-- Tree View -->
+        <record id="venus_trip_location_tree_view" model="ir.ui.view">
+            <field name="name">Route Location</field>
+            <field name="model">venus.trip.location</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+             	<tree string="Route Location" default_order = "id desc"> 
+					<field name="name"/>
+					<field name="code"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Search View Start -->
+		<record id="venus_trip_location_search_view" model="ir.ui.view">
+			<field name="name">Route Location</field>
+			<field name="model">venus.trip.location</field>
+			<field name="arch" type="xml">
+				<search string="Route Location">
+					<field name="name" string="Name"  filter_domain="[('name','ilike',self)]" />
+					<field name="code" string="Code"  filter_domain="[('code','ilike',self)]" />
+				</search>
+			</field>
+		</record>
+	
+		<!-- Search View End -->
+        <record id="action_venus_trip_location" model="ir.actions.act_window">  
+            <field name="name">Route Location</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">venus.trip.location</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" ref="venus_trip_location_tree_view"></field>
+            <field name="search_view_id" ref="venus_trip_location_search_view"/>
+        </record>
+
+        <!-- Menuitems -->
+    	<menuitem name="Route Location" id="pm_venus_trip_location" parent="mt_venus_masters.sales_tpm_masters" action="action_venus_trip_location" sequence='4'/>
+
+    </data>
+</odoo>

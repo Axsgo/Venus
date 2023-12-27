@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		
+		<record id="seq_venus_trip" model="ir.sequence">
+            <field name="name">Route sequence</field>
+            <field name="code">venus.trip</field>
+            <field name="prefix">RT</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        
+		<!-- Followup Scheduler -->
+        <record id="venus_vehicle_ins_expiry_scheduler" model="ir.cron">
+            <field name="name">Vehicle Expiry Scheduler</field>
+            <field name="model_id" ref="model_venus_vehicle"/>
+            <field name="state">code</field>
+            <field name="code">model._entry_vehicle_expiry()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="doall" eval="False"/>
+        </record>
+        
+        <record id="venus_driver_licence_expiry_scheduler" model="ir.cron">
+            <field name="name">Licence Expiry Scheduler</field>
+            <field name="model_id" ref="model_venus_driver"/>
+            <field name="state">code</field>
+            <field name="code">model._entry_licence_expiry()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="doall" eval="False"/>
+        </record>
+
+        <!-- Vehicle Insurance Expiry Mail -->
+        <record id="email_template_venus_vehcile_ins_mail" model="mail.template">
+            <field name="name">Vehicle Insurance Expiry Alert Mail</field>
+            <field name="model_id" ref="model_venus_vehicle"/>
+            <field name="email_from">${ctx['email'] |safe}</field>
+            <field name="email_to">${ctx['email_to'] |safe}</field>
+            <field name="email_cc"></field>
+            <field name="subject">Vehicle Insurance Expiry - ${object.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    	Dear ${ctx['emp_name']},
+                        <br></br>
+                        <br></br>
+                        This is a reminder mail that the Car Insurance for vehicle - <b>${object.name}</b> is going to expire soon!!!. Kindly find the further details below.
+                        <br></br>
+                        <br></br>
+                        Vehicle No        : ${object.name},<br></br>
+                        Vehicle Name      : ${object.vehicle_name},<br></br>
+                        Insurance No      : ${object.ins_no},<br></br>
+                        Expiry Date       : ${object.ins_expiry.strftime('%d/%m/%Y')},<br></br>
+                        Status            : ${ctx['status']}.<br></br>
+                        <br></br>
+                        <br></br>
+                        Please feel free to contact us if you have any questions.
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.user_id.lang}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+            
+        <!-- Vehicle Registration Expiry Mail -->
+        <record id="email_template_venus_vehcile_reg_mail" model="mail.template">
+            <field name="name">Vehicle Registration Expiry Alert Mail</field>
+            <field name="model_id" ref="model_venus_vehicle"/>
+            <field name="email_from">${ctx['email'] |safe}</field>
+            <field name="email_to">${ctx['email_to'] |safe}</field>
+            <field name="email_cc"></field>
+            <field name="subject">Vehicle Registration Expiry - ${object.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    	Dear ${ctx['emp_name']},
+                        <br></br>
+                        <br></br>
+                        This is a reminder mail that the Car Registration for vehicle - <b>${object.name}</b> is going to expire soon!!!. Kindly find the further details below.
+                        <br></br>
+                        <br></br>
+                        Vehicle No        : ${object.name},<br></br>
+                        Vehicle Name      : ${object.vehicle_name},<br></br>
+                        Expiry Date       : ${object.reg_expiry.strftime('%d/%m/%Y')},<br></br>
+                        Status            : ${ctx['status']}.<br></br>
+                        <br></br>
+                        <br></br>
+                        Please feel free to contact us if you have any questions.
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.user_id.lang}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+ 		
+        <!-- Driver Licence Expiry Mail -->
+        <record id="email_template_venus_licence_mail" model="mail.template">
+            <field name="name">Driver Licence Expiry Alert Mail</field>
+            <field name="model_id" ref="model_venus_driver"/>
+            <field name="email_from">${ctx['email'] |safe}</field>
+            <field name="email_to">${ctx['email_to'] |safe}</field>
+            <field name="email_cc"></field>
+            <field name="subject">Driver Licence Expiry - ${object.name}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    	Dear ${ctx['emp_name']},
+                        <br></br>
+                        <br></br>
+                        This is a reminder mail that the Driver Licence for - <b>${object.name}</b> is going to expire soon!!!. Kindly find the further details below.
+                        <br></br>
+                        <br></br>
+                        Driver Name      : ${object.name},<br></br>
+                        Licence No      : ${object.licence},<br></br>
+                        Expiry Date       : ${object.licence_expiry.strftime('%d/%m/%Y')},<br></br>
+                        Status            : ${ctx['status']}.<br></br>
+                        <br></br>
+                        <br></br>
+                        Please feel free to contact us if you have any questions.
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.user_id.lang}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+            
+        
+	</data>
+</odoo>

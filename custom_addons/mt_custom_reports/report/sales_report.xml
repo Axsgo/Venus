@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="sales_layout_custom">
+        <t t-if="not o" t-set="o" t-value="doc"/>
+        <t t-if="not company">
+            <!-- Multicompany -->
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t>
+        <div class="article" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+            <t t-out="0"/>
+        </div>
+        <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
+            <div class="row">
+                <div class="col-6 mb4">
+                    <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height: 105px;" alt="Logo"/>
+                </div>
+                <div class="col-6 text-right" name="moto">
+                    <div style="font-size:35pt;font-weight: 900;">Quotation</div>
+                    <div class="text-right" style="font-size:18pt;font-weight: 900;" name="moto">V.A.T. Reg. # 
+                        <span t-field="company.vat"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3" name="company_address">
+                    <span t-field="o.company_id.name"/><br/>    
+                    <span t-field="o.company_id.street"/>,
+                </div> 
+                <div class="col-3" name="company_address">
+                    Phone: <span t-field="o.company_id.phone"/><br/>   
+                    Fax: <span t-field="o.company_id.mobile"/>
+                </div> 
+            </div>
+        </div>
+        <div class="footer">
+            <table style="border: 1px solid;">
+                <tbody>
+                <tr width="1200px">
+                    <td width="1200px" style="font-weight: 900;text-align: center;font-size:12pt;color:#4a9ce0;">
+                        <p>
+                            We thank you for the opportunity to submit our quotation and trust that it meets with your approval.
+                        </p>
+                    </td>
+                </tr>
+                <tr width="1200px">
+                    <td width="1200px" style="text-align: center;background: grey;font-size:9pt;">
+                        <p>
+                            NOTWITHSTANDING THAT THE BUYER OBTAINS POSSESSION OF THE GOODS, THE OWNERSHIP THEREIN WILL REMAIN IN THE SELLER UNTIL SUCH TIME AS THE AS THE PAYMENT IS MADE
+                            IN FULLTO THE SELLER, WHICH SHALL BE ENTILTED TO SUCH RIGHTS OF ACCESS TO THE BUYERS PREMISES TO ENFORCE ITS RIGHTS HEREUNDER. ALL GOODS AT BUYERS RISK FROM
+                            TIME OF DELIVERY. ALL OVERDUE ACCOUNTS SHALL ATTRACT INTEREST AT A RATE OF 2% PER MONTH. PRICES QUOTED ARE SUBJECT TO CHANGE WITH ANY CURRENT FLUCTUATION
+                            IN THE EXCHANGE RATE AS AT THE DATE ABOVE.
+                        </p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </template>
+
+<template id="report_sales_document_inherit">
+    <t t-call="sales_custom_report.sales_layout_custom">
+        <t t-set="o" t-value="o.with_context(lang=lang)"/>
+        <t t-set="forced_vat" t-value="o.fiscal_position_id.foreign_vat"/>
+        <t t-set="product_count" t-value="10"/>
+        <t t-set="len_lines" t-value="int(len(o.order_line)/product_count)"/>
+        <t t-set="len_lines_remainder" t-value="len(o.order_line)/product_count"/>
+        <t t-set="len_lines_split" t-value="str(len_lines_remainder).split('.')"/>
+        <t t-if="len_lines_split[1] != 0">
+            <t t-set="len_lines" t-value="len_lines + 1"/>
+        </t>
+        <t t-set="line_val_count" t-value="0"/>
+        <t t-set="page_count" t-value="1"/>
+        <t t-foreach="len_lines" t-as="l">
+            <table style="border: none;font-size:12pt;">
+                <tbody>
+                    <tr width="1200px">
+                        <td width="370px">
+                          <span t-field="o.company_id.street2"/>,<br/>
+                          <span t-field="o.company_id.country_id.name"/>.
+                        </td>
+                        <td width="430px">
+                          Email: <span t-field="o.company_id.email"/><br/>
+                          Website: <span t-field="o.company_id.website"/>
+                        </td>
+                        <td width="200px" style="border: 1px solid;background: #4a9ce0;text-align: center;">
+                            <p style="color:white;">DATE</p>
+                        </td>
+                        <td width="200px" style="border: 1px solid;background: #4a9ce0;text-align: center;">
+                            <p style="color:white;">QUOTATION NO.</p>
+                        </td>
+                    </tr>
+                    <tr width="1200px">
+                        <td width="325px"> </td>
+                        <td width="475px"> </td>
+                        <td width="200px" style="border: 1px solid;text-align: center;">
+                            <p class="m-0" t-field="o.date_order" t-options="{&quot;format&quot;: &quot;dd/MM/yyyy&quot;}"/>
+                        </td>
+                        <td width="200px" style="border: 1px solid;text-align: center;">
+                            <p class="m-0" t-field="o.name"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table style="border: none;position:relative;top:10px;font-size:11pt;">
+                <tbody>
+                    <tr width="1200px">
+                        <td width="600px" style="border: 1px solid;background: #4a9ce0;">
+                            <p style="color:white;padding-left:20px;">SOLD TO - NAME/ADDRESS:</p>
+                        </td>
+                        <td width="50px"> </td>
+                        <td width="550px" style="border: 1px solid;background: #4a9ce0;">
+                          <p style="color:white;padding-left:20px;">SHIP TO - NAME/ADDRESS:</p>                    
+                        </td>
+                    </tr>
+                    <tr width="1200px">
+                        <td width="600px" style="border: 1px solid;">
+                            <div t-field="o.partner_invoice_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;, &quot;phone&quot;], &quot;no_marker&quot;: True, &quot;phone_icons&quot;: True}" style="padding-left:20px;"/>
+                        </td>
+                        <td width="50px"> </td>
+                        <td width="550px" style="border: 1px solid;">
+                            <div t-field="o.partner_shipping_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;, &quot;phone&quot;], &quot;no_marker&quot;: True, &quot;phone_icons&quot;: True}" style="padding-left:20px;"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table style="border: none;position:relative;top:10px;font-size:10pt;">
+                <tbody>
+                    <t t-set="customer" t-value="o.partner_id.name.split('-')"/>
+                    <tr width="1200px" style="background: #4a9ce0;">
+                        <td width="480px" style="border: 1px solid;background: #4a9ce0;text-align: center;">
+                            <p style="color:white;">CUSTOMER R.F.Q./ REFERENCE NO</p>
+                        </td>
+                        <td width="240px" style="border: 1px solid;background: #4a9ce0;text-align: center;">
+                            <p style="color:white;">TERMS</p>
+                        </td>
+                        <td width="240px" style="border: 1px solid;background: #4a9ce0;text-align: center;">
+                            <p style="color:white;">CUSTOMER I.D.</p>
+                        </td>
+                        <td width="240px" style="border: 1px solid;background: #4a9ce0;text-align: center;">
+                          <p style="color:white;">SALES REP.</p>
+                        </td>
+                    </tr>
+                    <tr width="1200px">
+                        <td width="480px" style="border: 1px solid;text-align: center;">
+                            <span t-field="o.client_order_ref"/>
+                        </td>
+                        <td width="240px" style="border: 1px solid;text-align: center;">
+                            <span t-if="o.payment_term_id" t-field="o.payment_term_id.name"/>
+                        </td>
+                        <td width="240px" style="border: 1px solid;text-align: center;">
+                            <t t-if="customer[0]">
+                                <span t-esc="customer[0]"/>
+                            </t>
+                        </td>
+                        <td width="240px" style="border: 1px solid;text-align: center;">
+                            <t t-if="o.user_id">
+                                <t t-set="sp_split" t-value="o.user_id.name.split(' ')"/>
+                                <t t-set="sp_len" t-value="len(sp_split)"/>
+                                <span t-esc="sp_split[0][0]"/>
+                                <t t-if="sp_len &gt; 1">
+                                  <span t-esc="sp_split[1][0]"/>
+                                </t>
+                            </t>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table style="border: 1px solid;border-collapse: separate;position:relative;top:10px;height:500px;font-size:10pt;">
+                <tbody>
+                    <t t-set="current_subtotal" t-value="0"/>
+                    <t t-set="counter" t-value="1"/>
+                    <tr width="1200px">
+                        <td width="175px" style="vertical-align:top;text-align: center;border: 1px solid;background: #4a9ce0;">
+                            <p style="color:white;">ITEM</p>
+                        </td>
+                        <td width="175px" style="vertical-align:top;text-align: center;border: 1px solid;background: #4a9ce0;">
+                            <p style="color:white;">PART NO.</p>
+                        </td>
+                        <td width="325px" style="vertical-align:top;text-align: center;border: 1px solid;background: #4a9ce0;">
+                            <p style="color:white;">DESCRIPTION</p>
+                        </td>
+                        <td width="175px" style="vertical-align:top;text-align: center;border: 1px solid;background: #4a9ce0;">
+                            <p style="color:white;">QUANTITY</p>
+                        </td>
+                        <td name="td_priceunit" width="175px" style="text-align: center;vertical-align:top;border: 1px solid;background: #4a9ce0;">
+                            <p style="color:white;">UNIT PRICE</p>
+                        </td>
+                        <td width="175px" style="vertical-align:top;text-align: center;border: 1px solid;background: #4a9ce0;">
+                            <p style="color:white;">TOTAL</p>
+                        </td>
+                    </tr>
+                    <t t-foreach="o.order_line" t-as="line">
+                        <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
+                        <t t-set="current_subtotal" t-value="current_subtotal + line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
+                        <t t-if="((counter &gt; line_val_count) and (counter &lt;= (product_count*page_count)))">
+                                <t t-if="not line.display_type">
+                                  <tr  width="1200px" style="border-collapse: separate;" >
+                                    <td name="td_name" width="175px" style="vertical-align:top;border-right: 1px solid;border-collapse: separate;"> </td>
+                                    <td name="td_quantity" width="175px" style="vertical-align:top;border-right: 1px solid;border-collapse: separate;">
+                                        <span t-field="line.product_id.default_code"/>
+                                    </td>
+                                    <td name="td_name" width="325px" style="vertical-align:top;border-right: 1px solid;border-collapse: separate;">
+                                        <span t-field="line.product_id.name"/>
+                                    </td>
+                                    <td name="td_quantity" width="175px" style="vertical-align:top;text-align: center;border-right: 1px solid;border-collapse: separate;">
+                                        <span t-esc="int(line['product_uom_qty'])"/>
+                                    </td>
+                                    <td name="td_priceunit" width="175px" style="text-align: right;vertical-align:top;border-right: 1px solid;border-collapse: separate;">
+                                        <span t-field="line.price_unit"/>
+                                    </td>
+                                    <td name="td_subtotal" class="o_price_total" width="175px" style="vertical-align:top;text-align: right;border-right: 1px solid;border-collapse: separate;">
+                                        <span t-esc="'%.2f'% float(line.price_subtotal)" widget="monetary" groups="account.group_show_line_subtotals_tax_excluded"/>
+                                        <span t-esc="'%.2f'% float(line.price_total)" widget="monetary" groups="account.group_show_line_subtotals_tax_included"/>
+                                    </td>
+                                  </tr>
+                                </t>
+                        </t>
+                        <t t-set="counter" t-value="counter + 1"/>
+                    </t>
+                    <t t-if="page_count == int(len_lines_split[0])+1">
+                      <t t-set="lines_td" t-value="product_count - (len(o.order_line) - line_val_count)"/>
+                      <t t-foreach="lines_td" t-as="td">
+                        <tr width="1200px" style="border-collapse: separate;" >
+                          <td width="175px" style="vertical-align:top;border-right: 1px solid;border-collapse: separate;"><p> </p></td>
+                          <td width="175px" style="border-right: 1px solid;"><p> </p></td>
+                          <td width="325px" style="border-right: 1px solid;"><p> </p></td>
+                          <td width="175px" style="border-right: 1px solid;"><p> </p></td>
+                          <td width="175px" style="border-right: 1px solid;"><p> </p></td>
+                          <td width="175px" style="border-right: 1px solid;"><p> </p></td>
+                        </tr>
+                      </t>
+                    </t>
+                </tbody>
+            </table>
+            <table style="border: none;position:relative;top:10px;font-size:10pt;">
+                <tbody>
+                    <tr width="1200px">
+                        <td width="275px" style="border-left: 1px solid;border-top: 1px solid;border-bottom: 1px solid;text-align: right;background: #4a9ce0;">
+                            <span style="color:white;">CUSTOMER </span>
+                        </td>
+                        <td width="275px" style="border-right: 1px solid;border-top: 1px solid;border-bottom: 1px solid;text-indent: 5px;background: #4a9ce0;">
+                          <span style="color:white;"> APPROVAL:</span>
+                        </td>
+                        <td width="225px" style="text-align: center;border: 1px solid;background: #4a9ce0;">
+                            <span style="color:white;">
+                                AUTHORIZED BY:  
+                            </span>
+                        </td>
+                        <td width="200px" style="text-align: right;">
+                            <span>
+                                <span style="">SUB-TOTAL</span>
+                            </span>
+                        </td>
+                        <t t-if="page_count == len_lines">
+                          <td width="225px" style="text-align:right;border: 1px solid;">
+                              <span>
+                                  <t t-set="tax_totals" t-value="o.tax_totals"/>
+                                  <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
+                                      <span t-esc="subtotal['formatted_amount']"/>
+                                      <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
+                                  </t>
+                              </span>
+                          </td>
+                        </t>
+                        <t t-else=" ">
+                          <td width="225px" style="text-align:right;border: 1px solid;">
+                          
+                          </td>
+                        </t>
+                    </tr>
+                    <tr width="1200px">
+                        <td width="365px" style="text-align: left;border-right: 1px solid;border-left: 1px solid;">
+                          PRINT NAME:
+                        </td>
+                        <td width="148px" style="text-align: left;border-right: 1px solid;">
+                            SIGNATURE:
+                        </td>
+                        <td width="264px" style="border-right: 1px solid;"> </td>
+                        <td width="198px" style="border-right: 1px solid;text-align: right;">
+                          <span>12.5% VAT</span>
+                        </td>
+                        <t t-if="page_count == len_lines">
+                          <td width="225px" style="border: 1px solid;text-align: right;">
+                            <t t-if="subtotal_to_show">
+                              <t t-foreach="tax_totals['groups_by_subtotal'][subtotal_to_show]" t-as="amount_by_group">
+                                  <span t-esc="amount_by_group['formatted_tax_group_amount']"/>
+                              </t>
+                          </t>
+                          </td>
+                        </t>
+                        <t t-else=" ">
+                          <td width="225px" style="text-align:right;border: 1px solid;">
+                          
+                          </td>
+                        </t>
+                    </tr>
+                    <tr width="1200px" height="15px">
+                        <td width="377px" style="border-left: 1px solid;border-right: 1px solid;border-bottom: 1px solid;"> </td>
+                        <td width="182px" style="border-right: 1px solid;border-left: 1px solid;border-bottom: 1px solid;"> </td>
+                        <td width="257px" style="border-right: 1px solid;border-left: 1px solid;border-bottom: 1px solid;"> </td>
+                        <td width="181px" style="border-right: 1px solid;border-left: 1px solid;border-bottom: 1px solid;text-align: right;">
+                            <span style="font-size:14pt;">TOTAL</span>
+                        </td>
+                        <t t-if="page_count == len_lines">
+                          <td width="203px" style="border: 1px solid;text-align: right;background: #4a9ce0;">
+                              <span style="font-size:14pt;color:white;" t-esc="tax_totals['formatted_amount_total']"/>
+                          </td>
+                        </t>
+                        <t t-else=" ">
+                          <td width="203px" style="text-align:right;border: 1px solid;">
+                          
+                          </td>
+                        </t>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="page-break-before:always;"> </p>
+            <t t-set="line_val_count" t-value="product_count*page_count"/>
+            <t t-set="page_count" t-value="page_count+1"/>
+        </t>
+    </t>
+</template>
+
+<template id="report_sales_inherit">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="sales_custom_report.report_sales_document_inherit" t-lang="lang"/>
+        </t>
+    </t>
+</template>
+
+</odoo>

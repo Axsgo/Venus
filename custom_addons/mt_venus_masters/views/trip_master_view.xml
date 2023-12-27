@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    	<!-- Form view -->
+        <record id="venus_trip_form_view" model="ir.ui.view">
+            <field name="name">Route</field>
+            <field name="model">venus.trip</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+				<form string="Route">
+					<header>
+						<button name = "entry_start" type = "object" string = "Start" states = "draft" class = "oe_highlight"/>
+						<button name = "entry_draft" type = "object" string = "Set to Draft" states = "started"/>
+						<button name = "entry_end" type = "object" string = "End" states = "started"/>
+						<button name = "entry_cancel" type = "object" string = "Cancel" states = "draft"/>
+						<field name="state" widget="statusbar" statusbar_visible='draft,started,ended,cancel'/>
+					</header>
+					<sheet> 
+						<div class="oe_title">
+	                        <h1>
+	                            <field name="name" placeholder="Route0000"/>
+	                        </h1>
+	                    </div>
+						<group> 
+							<group>
+								<field name="driver_id" required='1' attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="vehicle_id" required='1' attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="trip_location_id" widget="many2many_tags" required='1' attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="location_id" required='1' attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="user_id" required='1' attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="start_km" required='1' attrs="{'readonly':[('state','!=','draft')]}"/>
+								<field name="end_km" required='1' attrs="{'readonly':[('state','!=','started')]}"/>
+							</group>
+						</group>
+						<notebook>
+							<page string = "Entry Info">
+								<group>
+									<group>
+										<field name="company_id" force_save='1' options="{'no_create': True, 'no_create_edit':True}" groups="base.group_multi_company"/>
+									</group>
+									<group></group>
+									<group>
+										<field name = "crt_user_id"/>
+										<field name = "update_user_id"/>
+										<field name = "start_user_id"  attrs = "{'invisible':[('state','=','draft')]}"/>
+										<field name = "end_user_id"  attrs = "{'invisible':[('state','=','started')]}"/>
+										<field name = "cancel_user_id"  attrs = "{'invisible':[('state','!=','cancel')]}"/>
+									</group>
+									<group>
+										<field name = "crt_date"/>
+										<field name = "update_date"/>
+										<field name = "start_date"  attrs = "{'invisible':[('state','=','draft')]}"/>
+										<field name = "end_date"  attrs = "{'invisible':[('state','=','started')]}"/>
+										<field name = "cancel_date"  attrs = "{'invisible':[('state','!=','cancel')]}"/>
+									</group>
+								</group>
+							</page>		
+						</notebook>
+					</sheet>
+				</form>
+            </field>
+        </record>
+        
+        <!-- Tree View -->
+        <record id="venus_trip_tree_view" model="ir.ui.view">
+            <field name="name">Route</field>
+            <field name="model">venus.trip</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+             	<tree string="Route" default_order = "id desc"> 
+					<field name="name"/>
+					<field name="driver_id"/>
+					<field name="vehicle_id"/>
+					<field name="location_id"/>
+					<field name="user_id"/>
+					<field name="start_km"/>
+					<field name="end_km"/>	 
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Search View Start -->
+		<record id="venus_trip_search_view" model="ir.ui.view">
+			<field name="name">Route</field>
+			<field name="model">venus.trip</field>
+			<field name="arch" type="xml">
+				<search string="Route">
+					<field name="name" string="Name"  filter_domain="[('name','ilike',self)]" />
+					<group expand="0" string="Group By...">
+						<filter name="driver_id" string="Driver" domain="[]" context="{'group_by':'driver_id'}"/>
+						<filter name="vehicle_id" string="Vehicle" domain="[]" context="{'group_by':'vehicle_id'}"/>
+						<filter name="location_id" string="Location" domain="[]" context="{'group_by':'location_id'}"/>
+					</group>
+				</search>
+			</field>
+		</record>
+	
+		<!-- Search View End -->
+        <record id="action_venus_trip" model="ir.actions.act_window">  
+            <field name="name">Route</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">venus.trip</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" ref="venus_trip_tree_view"></field>
+            <field name="search_view_id" ref="venus_trip_search_view"/>
+        </record>
+
+        <!-- Menuitems -->
+    	<menuitem name="Route" id="pm_venus_trip" parent="mt_venus_masters.sales_tpm_masters" action="action_venus_trip" sequence='3'/>
+
+    </data>
+</odoo>

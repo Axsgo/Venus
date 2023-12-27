@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	
+	<report
+		id="invoice_custom_report"
+		model="account.move"
+		string="Invoice Report"
+		report_type="qweb-pdf"
+		name="mt_custom_reports.report_invoice_customized"
+		file="mt_custom_reports.report_invoice_customized"
+		print_report_name="'Invoice - %s' % (object.name)"
+	/>
+	
+	<template id="axsgo_external_layout_standard">
+        <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
+            <div class="row">
+                <div class="col-5" style="line-height: 1.2;color:#2B6280;">
+					<strong style="font-size:18pt;">VENUS AROKYA</strong><br/>
+					<strong style="font-size:12pt;">GENERAL TRADING LLC</strong><br/>
+					<strong t-field="company.street" style="font-size:10pt;"/>,<strong t-field="company.street2" style="font-size:10pt;"/><br />
+					<strong t-field="company.city" style="font-size:10pt;"/>-<strong t-field="company.country_id.name" style="font-size:10pt;"/>.	
+					<strong style="font-size:10pt;">P.O.Box: <span t-field="company.zip"/></strong><br/>
+					<strong style="font-size:10pt;">Tel: <span t-field="company.phone"/><t t-if="company.website">, Web: <span t-field="company.website"/></t></strong><br/>
+					<strong style="font-size:10pt;">Email: <span t-field="company.email"/></strong><br/>
+					<strong style="font-size:10pt;">TRN <span t-field="company.vat"/></strong>	
+                </div>
+                <div class="col-2">
+					<img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % to_text(company.logo)" style="max-height: 140px;margin-left:-54px" />
+				</div>
+				<div class="col-5 text-right" style="line-height: 1.2;color:#2B6280;">
+					<strong style="font-size:18pt;">فينوس أروكيا</strong><br/>
+					<strong style="font-size:12pt;">للتجارة العامة ذ.م.م</strong><br/>
+					<strong style="font-size:10pt;">منطقة القصيص الصناعية 1,MHBH 01</strong><br />
+					<strong style="font-size:10pt;">دبي-الامارات العربية المتحدة .ص.ب: 48871</strong><br/>
+					<strong style="font-size:10pt;"><span t-field="company.phone"/> :هاتف, <t t-if="company.website"><span t-field="company.website"/> :ويب</t></strong><br/>
+					<strong style="font-size:10pt;"><span t-field="company.email"/> :بريد إلكتروني</strong><br/>
+					<strong style="font-size:10pt;"><span t-field="company.vat"/> TRN</strong>	
+                </div>
+            </div>
+        </div>
+
+        <div t-attf-class="article o_report_layout_standard o_company_#{company.id}_layout"  t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+            <!-- This div ensures that the address is not cropped by the header. -->
+            <t t-call="web.address_layout"/>
+            <t t-raw="0"/>
+        </div>
+        
+        <div t-attf-class="footer o_standard_footer o_company_#{company.id}_layout">
+			<div class="row" style="margin-top:12px;font-weight: bold;">
+				<div class="col-4 text-center" style="border: 1px solid;border-radius: 10px;font-size:10pt;">
+					توقيع المتلقي <br/>
+					Receiver's Signature
+					<br/><br/><br/>
+					........................................................................................
+	        	</div>
+				<div class="col-2 text-center" style="border: 1px solid;border-radius: 10px;font-size:10pt;">
+					السيارة لا <br/>
+					Vehicle No.
+					<br/><br/><br/>
+					......................................
+				</div>
+				<div class="col-2 text-center" style="border: 1px solid;border-radius: 10px;font-size:10pt;">
+					فحص بواسطة <br/>
+					Checked by
+					<br/><br/><span t-esc="request.env.user.name"/><br/>
+					......................................
+				</div>
+				<div class="col-4 text-center" style="border: 1px solid;border-radius: 10px;font-size:10pt;">
+					VENUS AROKYA GENERAL TRADING LLC
+					<br/><br/><br/><br/>
+					........................................................................................
+				</div>
+        	</div>
+        </div>
+    </template>
+	
+	<template id="axsgo_external_layout">
+        <t t-if="not o" t-set="o" t-value="doc"/>
+
+        <t t-if="not company">
+            <!-- Multicompany -->
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t>
+
+        <t t-call="mt_custom_reports.axsgo_external_layout_standard"><t t-raw="0"/></t>
+    </template>
+	
+	<template id="report_invoice_new">
+        <t t-call="mt_custom_reports.axsgo_external_layout">
+            <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
+	        <t t-set="product_count" t-value="20"/>
+	        <t t-set="len_lines" t-value="int(len(doc.invoice_line_ids)/product_count)"/>
+	        <t t-set="len_lines_remainder" t-value="len(doc.invoice_line_ids)/product_count"/>
+	        <t t-set="len_lines_split" t-value="str(len_lines_remainder).split('.')"/>
+	        <t t-if="len_lines_split[1] != 0">
+	            <t t-set="len_lines" t-value="len_lines + 1"/>
+	        </t>
+	        <t t-set="line_val_count" t-value="0"/>
+	        <t t-set="page_count" t-value="1"/>
+	       	<t t-foreach="len_lines" t-as="l">
+				<div class="page">
+					<div class="watermark" style="position:absolute;width:100%;height:100%;text-align:center;margin-top:200px;margin-right:80px;">
+						<img style="width:85%;" t-att-src="'/mt_custom_reports/static/img/Venus_Logo.png'"/>
+					</div>
+					<div class="row">
+						<div class="col-5" style="border: 1px solid;border-radius: 10px;font-size:9;">
+							<div class="row">
+								<div class="col-5">Invoice No:</div>
+						 		<div class="col-7"><span style="text-align: center;" t-field="doc.name"/></div> 
+						 	</div>
+						 	<div class="row">
+								<div class="col-5">Date:</div>
+								<div class="col-7"><span style="text-align: center;" t-field="doc.invoice_date"/></div>	
+							</div>
+						 	<div class="row">
+								<div class="col-5">Payment Type:</div>
+								<div class="col-7"><span style="text-align: center;" t-field="doc.amt_pay_type"/></div>
+							</div>
+							<div class="row">
+								<div class="col-5">Sales Person:</div>
+								<div class="col-7"><span style="text-align: center;" t-field="doc.invoice_user_id.name"/></div>
+							</div>
+			        	</div>
+						<div class="col-2 text-center" style="border: 1px solid;height:90px;border-radius: 15px;background: #2B6280;font-size:11;font-weight: bold;color: white;">
+							<span><br/>
+							فاتورة ضريبية
+							<br/>
+							TAX INVOICE</span>
+						</div>
+						<div class="col-5" style="border: 1px solid;border-radius: 10px;font-size:9;">
+							<div class="row">
+								<div class="col-3">M/S:</div>
+								<div class="col-9"><span style="text-align: center;" t-field="doc.partner_id.name"/></div>
+							</div>
+							<div class="row">
+								<div class="col-3">TRN:</div>
+								<div class="col-9"><span style="text-align: center;" t-field="doc.partner_id.vat"/></div>
+							</div>	
+							<div class="row">
+								<div class="col-3">Tel:</div> 
+								<div class="col-9"><span style="text-align: center;" t-field="doc.partner_id.phone"/></div>
+							</div>
+						</div>
+		        	</div>
+		        	<div class="row">
+			            <table style="border: 1px solid;border-collapse: separate;position:relative;top:10px;width:100%;height:900px;font-size:12pt;">
+			                <thead>
+								<t t-set="counter" t-value="1" />
+			                    <tr width="1200px" style="border-collapse: separate;">
+									<th name="th_sno" width="50px" style="vertical-align:top;text-align: center;border: 1px solid;background: #DDDCDB;">
+										<span style="color:#2B6280;">رقم سري <br/> S.No</span>
+									</th>
+			                        <th name="th_description" width="600px" style="vertical-align:top;text-align: center;border: 1px solid;background: #DDDCDB;">
+										<span style="color:#2B6280;">وصف <br/> Description</span>
+									</th>
+			                        <th name="th_quantity" width="70px" style="vertical-align:top;text-align: center;border: 1px solid;background: #DDDCDB;">
+										<span style="color:#2B6280;">كمية <br/> Qty</span>
+									</th>
+			                        <th name="th_uom" width="150px" style="vertical-align:top;text-align: center;border: 1px solid;background: #DDDCDB;">
+										<span style="color:#2B6280;">وحدة <br/> Unit</span>
+									</th>
+			                        <th name="th_rate" width="100px" style="vertical-align:top;text-align: center;border: 1px solid;background: #DDDCDB;">
+										<span style="color:#2B6280;">معدل <br/> Rate</span>
+									</th>
+			                        <th name="th_taxes" width="100px" style="vertical-align:top;text-align: center;border: 1px solid;background: #DDDCDB;">
+										<span style="color:#2B6280;">ضريبة <br/> VAT</span>
+									</th>
+			                        <th name="th_amount" width="130px" style="vertical-align:top;text-align: center;border: 1px solid;background: #DDDCDB;">
+										<span style="color:#2B6280;">كمية <br/> Amount</span>
+									</th>
+			                    </tr>
+			                </thead>
+			               	<tbody>
+			                    <t t-foreach="doc.invoice_line_ids" t-as="line">
+			                        <t t-if="((counter &gt; line_val_count) and (counter &lt;= (product_count*page_count)))">
+				                        <tr width="1200px" style="border-collapse: separate;">
+				                            <t t-if="not line.display_type">
+												<td class="text-center" width="50px" style="vertical-align:top;border-right: 1px solid;border-collapse: separate;">
+													<span t-esc="counter" />
+												</td>
+				                                <td name="td_name" width="600px" style="padding-left:3px;vertical-align:top;border-right: 1px solid;border-collapse: separate;">
+													<span t-field="line.name"/>
+												</td>
+				                                <td name="td_quantity" width="70px" class="text-right" style="padding-right:3px;vertical-align:top;border-right: 1px solid;border-collapse: separate;">
+				                                    <span t-field="line.quantity"/>
+				                               	</td>
+				                               	<td name="td_uom" width="150px" class="text-right" style="padding-right:3px;vertical-align:top;border-right: 1px solid;border-collapse: separate;">
+				                                    <span t-field="line.product_uom_id"/>
+				                                </td>
+				                                <td name="td_priceunit" width="100px" class="text-right" style="padding-right:3px;vertical-align:top;border-right: 1px solid;border-collapse: separate;">
+				                                    <span t-field="line.price_unit"/>
+				                                </td>
+				                                <td name="td_taxes" width="100px" class="text-right" style="padding-right:3px;vertical-align:top;border-right: 1px solid;border-collapse: separate;">
+													<span t-esc="round(line.price_total-line.price_subtotal,2)" />
+				                                </td>
+				                                <td name="td_subtotal" width="130px" class="text-right o_price_total" style="padding-right:3px;vertical-align:top;border-collapse: separate;">
+				                                    <span t-esc="'{:,.2f}'.format(line.price_subtotal)" groups="account.group_show_line_subtotals_tax_excluded"/>
+				                                    <span t-esc="'{:,.2f}'.format(line.price_total)" groups="account.group_show_line_subtotals_tax_included"/>
+				                                </td>
+				                            </t>
+				                        </tr>
+			                    	</t>
+			                    	<t t-set="counter" t-value="counter + 1" />
+			                    </t>
+			                    <t t-if="page_count == int(len_lines_split[0])+1">
+			                    	<t t-set="lines_td" t-value="product_count - (len(doc.invoice_line_ids) - line_val_count)"/>
+			                      	<t t-foreach="lines_td" t-as="td">
+			                        	<tr width="1200px" style="border-collapse: separate;" >
+			                          		<td style="vertical-align:top;border-right: 1px solid;border-collapse: separate;"><p> </p></td>
+			                          		<td style="border-right: 1px solid;"><p> </p></td>
+			                          		<td style="border-right: 1px solid;"><p> </p></td>
+			                          		<td style="border-right: 1px solid;"><p> </p></td>
+			                          		<td style="border-right: 1px solid;"><p> </p></td>
+			                          		<td style="border-right: 1px solid;"><p> </p></td>
+			                        	</tr>
+			                      	</t>
+			                    </t>
+			                    <t t-if="page_count == len_lines">
+			                    	<tr class="border-black o_subtotal" width="1200px" style="border-collapse: separate;">
+										<td colspan="3" rowspan="4" style="padding-left:3px;vertical-align:top;border-right: 1px solid;border-collapse: separate;font-size:10pt;">
+											1. We confirm having received the above mentioned goods in good Condition &amp; Order, <br/>
+											2. No claim for damage or shortage will be entertained once goods are accepted, <br/>
+											3. Prices are subjected to market condition
+										</td>
+			                            <td name="td_amount_untaxed_label" colspan="3" style="padding-left:3px;vertical-align:top;border-right: 1px solid;border-collapse: separate;">
+											<strong>Sub Total / المجموع الفرعي</strong>
+										</td>
+			                            <td name="td_amount_untaxed" class="text-right" style="padding-right:3px;vertical-align:top;border-collapse: separate;">
+			                                <span t-esc="'{:,.2f}'.format(doc.amount_untaxed_signed)"/>
+			                            </td>
+			                        </tr>
+			                        <tr class="border-black o_subtotal" width="1200px" style="border-collapse: separate;">
+			                            <td name="td_discount" colspan="3" style="padding-left:3px;vertical-align:top;border-right: 1px solid;border-collapse: separate;">
+											<strong>Discount / تخفيض</strong>
+										</td>
+			                            <td name="td_amount_discount" class="text-right" style="padding-right:3px;vertical-align:top;border-collapse: separate;">
+			                            	<span t-esc="'{:,.2f}'.format(doc.discount_amt)" />
+			                            </td>
+			                        </tr>
+			                        <tr class="border-black o_subtotal" width="1200px" style="border-collapse: separate;">
+			                            <td name="td_net" colspan="3" style="padding-left:3px;vertical-align:top;border-right: 1px solid;border-collapse: separate;">
+											<strong>Net Amount / كمية الشبكة</strong>
+										</td>
+			                            <td name="td_net_amount" class="text-right" style="padding-right:3px;vertical-align:top;border-collapse: separate;">
+			                            	<span t-esc="'{:,.2f}'.format(doc.amount_untaxed_signed-doc.discount_amt)" />
+			                            </td>
+			                        </tr>
+			                        <tr class="border-black o_subtotal" width="1200px" style="border-collapse: separate;">
+			                            <td name="td_tax" colspan="3" style="padding-left:3px;vertical-align:top;border-right: 1px solid;border-collapse: separate;">
+											<strong>VAT / ضريبة</strong>
+										</td>
+			                            <td name="td_amount_tax" class="text-right" style="padding-right:3px;vertical-align:top;border-collapse: separate;">
+			                                <span t-esc="'{:,.2f}'.format(doc.amount_tax_signed)" />
+			                            </td>
+			                        </tr>
+			                        <tr class="border-black o_total" width="1200px" style="border-collapse: separate;">
+										<td colspan="3" style="padding-left:3px;vertical-align:top;border-right: 1px solid;border-collapse: separate;font-size:12pt;">
+											<span t-esc="doc.amount_in_en(doc.amount_total)"/><br/>
+											<span t-esc="doc.amount_in_ar(doc.amount_total)"/>
+										</td>
+			                            <td name="td_amount_total_label" colspan="3" style="padding-left:3px;vertical-align:top;border-right: 1px solid;border-collapse: separate;">
+											<strong>Total Amount / المبلغ الإجمالي <br/><span t-field="doc.currency_id.name"/></strong>
+										</td>
+			                            <td name="td_amount_total" class="text-right" style="padding-right:3px;vertical-align:top;border-collapse: separate;">
+			                                <span t-esc="'{:,.2f}'.format(doc.amount_total)" />
+			                            </td>
+			                       	</tr>
+			                     	<tr class="border-black o_total" width="1200px" style="border-collapse: separate;">
+										<td colspan="7" style="padding-left:3px;vertical-align:top;border-collapse: separate;font-size:12pt;">
+											Cheques should be drawn in favour of <strong t-field="doc.company_id.name" /> "A/C Payee Only"
+											<div class="row">
+												<div class="col-2">Bank Name</div>
+												<div class="col-7">: RAK BANK</div>
+											</div>
+											<div class="row">
+												<div class="col-2">Account Name</div>
+												<div class="col-7">: VENUS AROKYA GENERAL TRADING LLC</div>
+											</div>
+											<div class="row">
+												<div class="col-2">Account No</div>
+												<div class="col-7">: 0182969921001</div>
+											</div>
+											<div class="row">
+												<div class="col-2">Bank Name</div>
+												<div class="col-7">: RAK BANK</div>
+											</div>
+											<div class="row">
+												<div class="col-2">IBAN</div>
+												<div class="col-7">: AE310400000182969921001</div>
+											</div>
+											<div class="row">
+												<div class="col-2">SWIFT</div>
+												<div class="col-7">: NRAKAEAK</div>
+											</div>
+											<div class="row">
+												<div class="col-2">BRANCH</div>
+												<div class="col-7">: OUD MEHTA BRANCH</div>
+											</div>
+										</td>
+									</tr>
+			                	</t>
+			                </tbody>
+			            </table>
+			    	</div>
+					<p style="page-break-before:always;"> </p>
+					<t t-set="line_val_count" t-value="product_count*page_count"/>
+		        	<t t-set="page_count" t-value="page_count+1"/>
+				</div>
+			</t>
+		</t>
+	</template>
+
+	<template id="report_invoice_customized">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="lang" t-value="doc.partner_id.lang"/>
+                <t t-call="mt_custom_reports.report_invoice_new" t-lang="lang"/>
+            </t>
+        </t>
+    </template>
+	
+</odoo>
