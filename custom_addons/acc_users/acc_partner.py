@@ -29,12 +29,13 @@ class AccPartner(models.Model):
 
 	@api.model
 	def create(self, vals):
-		if vals['customer_rank'] > 0 and vals['supplier_rank'] == 0:
-			vals['partner_no'] = self.env['ir.sequence'].next_by_code('res.customer')
-		elif vals['customer_rank'] == 0 and vals['supplier_rank'] > 0:
-			vals['partner_no'] = self.env['ir.sequence'].next_by_code('res.supplier')
-		else:
-			vals['partner_no'] = self.env['ir.sequence'].next_by_code('res.partner')
+		if vals.get('customer_rank') and vals.get('supplier_rank'):
+			if vals['customer_rank'] > 0 and vals['supplier_rank'] == 0:
+				vals['partner_no'] = self.env['ir.sequence'].next_by_code('res.customer')
+			elif vals['customer_rank'] == 0 and vals['supplier_rank'] > 0:
+				vals['partner_no'] = self.env['ir.sequence'].next_by_code('res.supplier')
+			else:
+				vals['partner_no'] = self.env['ir.sequence'].next_by_code('res.partner')
 		return super(AccPartner, self).create(vals)
 
 	def name_get(self):

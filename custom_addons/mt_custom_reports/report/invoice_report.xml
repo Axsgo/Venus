@@ -273,7 +273,7 @@
 			                                <span t-esc="'{:,.2f}'.format(doc.amount_total)" />
 			                            </td>
 			                       	</tr>
-			                     	<tr class="border-black o_total" width="1200px" style="border-collapse: separate;">
+			                     	<!--<tr class="border-black o_total" width="1200px" style="border-collapse: separate;">
 										<td colspan="7" style="padding-left:3px;vertical-align:top;border-collapse: separate;font-size:12pt;">
 											Cheques should be drawn in favour of <strong t-field="doc.company_id.name" /> "A/C Payee Only"
 											<div class="row">
@@ -305,7 +305,7 @@
 												<div class="col-7">: OUD MEHTA BRANCH</div>
 											</div>
 										</td>
-									</tr>
+									</tr>-->
 			                	</t>
 			                </tbody>
 			            </table>

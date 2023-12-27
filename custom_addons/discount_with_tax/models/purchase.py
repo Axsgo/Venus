@@ -3,9 +3,9 @@
 
 import odoo.addons.decimal_precision as dp
 from odoo import api, fields, models, _
-from odoo.tools.float_utils import float_compare, float_is_zero
+from odoo.tools.float_utils import float_is_zero
 from itertools import groupby
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import UserError
 
 
 class purchase_order(models.Model):
@@ -169,6 +169,7 @@ class purchase_order(models.Model):
         invoice_vals = {
             'ref': self.partner_ref or '',
             'move_type': move_type,
+            'invoice_date':fields.Date.today(),
             'narration': self.notes,
             'currency_id': self.currency_id.id,
             'invoice_user_id': self.user_id and self.user_id.id,

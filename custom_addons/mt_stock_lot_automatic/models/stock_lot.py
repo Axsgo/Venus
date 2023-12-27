@@ -88,6 +88,12 @@ class ProductSettings(models.TransientModel):
 
 class StockPicking(models.Model):
     _inherit = "stock.picking"
+    
+    def _set_done_qty(self):
+        pickings = self.filtered(lambda p: p.picking_type_id.code == 'incoming')
+        for move in pickings.move_ids_without_package:
+            move.next_serial_count = move.reserved_availability
+            move.action_update_move_quantity()
 
     def _set_auto_lot(self):
         """
@@ -117,12 +123,13 @@ class StockPicking(models.Model):
         )
         for l in lines:
             l.lot_id.name = l.serial_no
-
+            
     def _action_done(self):
         self._set_auto_lot()
         return super()._action_done()
 
     def button_validate(self):
+        self._set_done_qty()
         self._set_auto_lot()
         self._replace_batch()
         return super().button_validate()
@@ -224,7 +231,7 @@ class StockMove(models.Model):
             elif self.product_id.tracking == 'lot':
                 if move_lines:
                     move_lines_commands.append((1, move_lines[0].id, {
-                        'qty_done': self.next_serial_count,
+                        'qty_done': 1,
                         # 'expiration_date':self.expiration_date,
                     }))
                     move_lines = move_lines[1:]

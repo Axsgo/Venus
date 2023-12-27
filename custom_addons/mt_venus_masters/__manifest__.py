@@ -16,7 +16,7 @@
         'views/sale_order_view.xml',
         'views/purchase_order_view.xml'
     ],
-    'depends': ['base','sale','purchase','sale_management'],
+    'depends': ['base','sale','purchase','sale_management','account'],
     'installable': True,
     'auto_install': False,
     'application': True,

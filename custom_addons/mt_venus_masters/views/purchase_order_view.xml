@@ -8,6 +8,10 @@
             <field name="model">purchase.order</field>
             <field name="inherit_id" ref="purchase.purchase_order_form"/>
             <field name="arch" type="xml">
+				<xpath expr="//button[@name='button_confirm']" position="after">
+                    <button name="create_all_delivery_and_invoices" string="Post in one time" states="draft,sent"
+                            type="object" class="btn-primary" />
+                </xpath>
                 <field name="partner_id" position="after">
                     <field name="purchase_type" widget="radio"/>
                     <field name="trip_id" attrs="{'required':[('purchase_type','=','trip')],'invisible':[('purchase_type','=','direct')]}"/>

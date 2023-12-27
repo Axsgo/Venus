@@ -2,6 +2,7 @@
 from odoo import models,fields,api
 from odoo.exceptions import UserError
 
+
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
@@ -70,6 +71,20 @@ class PurchaseOrder(models.Model):
             'company_id': self.company_id.id,
         }
         
+    def validate_transfer(self):
+        for stok in self.picking_ids:
+            stok.button_validate()
+                
+    def order_create_invoices(self):
+            self.action_create_invoice()
+            for invoice in self.invoice_ids:
+                invoice.sudo().action_post()
+
+    def create_all_delivery_and_invoices(self):
+        self.sudo().button_confirm()
+        self.sudo().validate_transfer()
+        self.sudo().order_create_invoices()
+            
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
     
