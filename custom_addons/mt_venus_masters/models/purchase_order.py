@@ -12,6 +12,11 @@ class PurchaseOrder(models.Model):
     free_avg_price_unit = fields.Float(string='Average Price', digits='Product Price', compute='_compute_free_purchase_qty')
     purchase_type = fields.Selection([('direct','Direct Purchase'),('trip','Van Purchase')],'Purchase Type',default='direct')
     
+    @api.constrains('partner_ref')
+    def partner_ref_constrains(self):
+        if self.partner_ref and self.env['purchase.order'].search([('partner_ref','=',self.partner_ref),('id','!=',self.id),('state','!=','cancel')]):
+            raise UserError("The same Vendor Reference cannot be associated to multiple Purchase Order.")
+   
     @api.onchange('purchase_type')
     def onchange_purchase_type(self):
         if self.purchase_type=='direct':
